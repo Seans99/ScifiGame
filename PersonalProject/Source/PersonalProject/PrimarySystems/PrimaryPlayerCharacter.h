@@ -64,6 +64,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "EnhancedInput")
 	class UInputAction* JournalAction;
 
+	UPROPERTY(EditAnywhere, Category = "EnhancedInput")
+	class UInputAction* InventoryAction;
+
 protected:
 	void Move(const FInputActionValue& InputValue);
 	void Jump();
@@ -74,6 +77,7 @@ protected:
 	void Interact();
 	void Cancel();
 	void Journal();
+	void Inventory();
 
 	UFUNCTION()
 	void HandleStaminaDepleted();

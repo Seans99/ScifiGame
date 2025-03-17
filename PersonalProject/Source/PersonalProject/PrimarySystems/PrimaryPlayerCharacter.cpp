@@ -69,6 +69,7 @@ void APrimaryPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		Input->BindAction(InteractAction, ETriggerEvent::Triggered, this, &APrimaryPlayerCharacter::Interact);
 		Input->BindAction(CancelAction, ETriggerEvent::Triggered, this, &APrimaryPlayerCharacter::Cancel);
 		Input->BindAction(JournalAction, ETriggerEvent::Triggered, this, &APrimaryPlayerCharacter::Journal);
+		Input->BindAction(InventoryAction, ETriggerEvent::Triggered, this, &APrimaryPlayerCharacter::Inventory);
 	}
 }
 
@@ -191,6 +192,11 @@ void APrimaryPlayerCharacter::Cancel()
 void APrimaryPlayerCharacter::Journal()
 {
 	if (OnShowJournal.IsBound()) OnShowJournal.Broadcast();
+}
+
+void APrimaryPlayerCharacter::Inventory()
+{
+	// Open inventory
 }
 
 
