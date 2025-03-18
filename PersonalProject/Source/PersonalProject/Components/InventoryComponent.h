@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/Structs/ItemStruct.h"
 #include "PersonalProject/UI/InventoryUI.h"
 #include "InventoryComponent.generated.h"
@@ -29,9 +30,18 @@ public:
 	UInventoryUI* InventoryWidget;
 
 public:
+	UFUNCTION()
+	void ToggleInventory();
+
+public:
 	TArray<FItemData> Items;
 
 	int CurrentIndex;
 	int MaxAmountPerItem = 10;
 	int InventorySize = 36;
+
+private:
+	APrimaryPlayerCharacter* Player;
+
+	bool InventoryOpen = false;
 };

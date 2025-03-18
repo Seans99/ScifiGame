@@ -7,6 +7,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInteractSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FJournalSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInventorySignature);
 
 class UCameraComponent;
 class APrimaryGameMode;
@@ -98,6 +99,9 @@ public:
 
 	UPROPERTY()
 	FInteractSignature OnCancel;
+
+	UPROPERTY()
+	FInventorySignature OnInventory;
 
 public:
 	FVector ObjectivePoint;

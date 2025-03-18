@@ -196,7 +196,7 @@ void APrimaryPlayerCharacter::Journal()
 
 void APrimaryPlayerCharacter::Inventory()
 {
-	// Open inventory
+	if (OnInventory.IsBound()) OnInventory.Broadcast();
 }
 
 
