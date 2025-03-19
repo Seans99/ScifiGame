@@ -6,6 +6,7 @@
 #include "../UI/PlayerHUD.h"
 #include "../UI/UIComponents/CustomButtonV1.h"
 #include "../UI/ObjectiveUI.h"
+#include "../UI/InventoryUI.h"
 #include "PrimaryPlayerController.h"
 #include "GameInstances/ObjectiveManager.h"
 #include "UObject/ConstructorHelpers.h"
@@ -256,7 +257,7 @@ void APrimaryGameMode::RemoveObjectiveWidget()
 {
 	if (ObjectiveWidget)
 	{
-		ObjectiveWidget->RemoveFromViewport();
+		ObjectiveWidget->RemoveFromParent();
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	}
 }

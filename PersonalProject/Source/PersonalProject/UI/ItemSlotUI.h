@@ -8,6 +8,8 @@
 #include "PersonalProject/Structs/ItemStruct.h"
 #include "ItemSlotUI.generated.h"
 
+class UInventoryUI;
+
 UCLASS()
 class PERSONALPROJECT_API UItemSlotUI : public UGUIBase
 {
@@ -18,7 +20,7 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
-	void RefreshSlot();
+	void RefreshSlot(FItemData RefreshItem);
 
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -31,5 +33,10 @@ public:
 	UTextBlock* ItemAmount;
 
 public:
+	UPROPERTY()
+	UInventoryUI* InventoryUI;
+	
 	FItemData* Item;
+	
+	int Index;
 };

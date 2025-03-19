@@ -16,7 +16,7 @@ void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	
 }
 
-void UItemSlotUI::RefreshSlot()
+void UItemSlotUI::RefreshSlot(FItemData RefreshItem)
 {
 	if (Item->ItemImage != nullptr)
 	{

@@ -2,11 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/Structs/ItemStruct.h"
-#include "PersonalProject/UI/InventoryUI.h"
 #include "InventoryComponent.generated.h"
 
+class APrimaryPlayerCharacter;
+class APrimaryPlayerController;
+
+class UInventoryUI;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PERSONALPROJECT_API UInventoryComponent : public UActorComponent
@@ -41,7 +43,9 @@ public:
 	int InventorySize = 36;
 
 private:
+	UPROPERTY()
 	APrimaryPlayerCharacter* Player;
 
-	bool InventoryOpen = false;
+	UPROPERTY()
+	APrimaryPlayerController* PlayerController;
 };

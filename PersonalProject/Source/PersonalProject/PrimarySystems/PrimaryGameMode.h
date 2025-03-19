@@ -12,6 +12,7 @@ class UPlayerHUD;
 class UObjectiveUI;
 class APrimaryPlayerController;
 class UObjectiveManager;
+class UInventoryUI;
 
 UENUM(BlueprintType)
 enum class EGameState : uint8
@@ -91,9 +92,12 @@ public:
 
 public:
 	bool bShowObjective = false;
-
+	
 public:
+	UPROPERTY()
 	APrimaryPlayerController* Controller;
+
+	UPROPERTY()
 	UObjectiveManager* ObjManager;
 
 private:
