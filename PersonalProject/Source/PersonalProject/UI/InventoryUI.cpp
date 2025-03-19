@@ -1,13 +1,18 @@
 #include "InventoryUI.h"
 #include "PersonalProject/Components/InventoryComponent.h"
-
 #include "VisualizeTexture.h"
+#include "Components/Button.h"
+#include "Components/WrapBox.h"
 #include "Kismet/GameplayStatics.h"
+#include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
 
 void UInventoryUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	Controller = Cast<APrimaryPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(),0));
+	
+	CloseBtn->OnClicked.AddDynamic(this, &UInventoryUI::CloseInventory);
 }
 
 void UInventoryUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -29,4 +34,10 @@ void UInventoryUI::RefreshInventory(UInventoryComponent* InventoryComp)
 			InventoryWrapBox->AddChild(ItemSlotWidget);
 		}
 	}
+}
+
+void UInventoryUI::CloseInventory()
+{
+	Controller->DisableMouse();
+	this->SetVisibility(ESlateVisibility::Hidden);
 }

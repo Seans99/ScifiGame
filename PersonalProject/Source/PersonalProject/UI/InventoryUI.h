@@ -3,11 +3,14 @@
 #include "CoreMinimal.h"
 #include "GUIBase.h"
 #include "ItemSlotUI.h"
-#include "Components/TextBlock.h"
-#include "Components/WrapBox.h"
 #include "InventoryUI.generated.h"
 
 class UInventoryComponent;
+class APrimaryPlayerController;
+
+class UTextBlock;
+class UButton;
+class UWrapBox;
 
 UCLASS()
 class PERSONALPROJECT_API UInventoryUI : public UGUIBase
@@ -31,8 +34,15 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UWrapBox* InventoryWrapBox;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UButton* CloseBtn;
+
 	FText ItemNameText;
 	FText ItemDescText;
+
+public:
+	UFUNCTION()
+	void CloseInventory();
 
 public:
 	UPROPERTY(EditAnywhere, Category = "UI")
@@ -41,4 +51,6 @@ public:
 	UPROPERTY()
 	UItemSlotUI* ItemSlotWidget;
 
+private:
+	APrimaryPlayerController* Controller;
 };

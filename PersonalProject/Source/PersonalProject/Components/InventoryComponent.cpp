@@ -23,7 +23,7 @@ void UInventoryComponent::BeginPlay()
 	if (Player)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Player Valid"));
-		Player->OnInventory.AddDynamic(this, &UInventoryComponent::ToggleInventory);
+		Player->OnInventory.AddDynamic(this, &UInventoryComponent::OpenInventory);
 	}
 	
 	Items.SetNum(InventorySize);
@@ -35,18 +35,17 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 }
 
-void UInventoryComponent::ToggleInventory()
+void UInventoryComponent::OpenInventory()
 {
-	UE_LOG(LogTemp, Display, TEXT("Toggle Inventory"));
 	if (!InventoryWidget->IsInViewport())
 	{
 		InventoryWidget->AddToViewport();
-		PlayerController->EnableMouseInGame();
+		PlayerController->EnableMouse();
 	}
 	else
 	{
-		InventoryWidget->RemoveFromParent();
-		PlayerController->DisableMouse();
+		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+		PlayerController->EnableMouse();
 	}
 }
 

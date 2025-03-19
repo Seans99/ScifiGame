@@ -33,7 +33,7 @@ public:
 
 public:
 	UFUNCTION()
-	void ToggleInventory();
+	void OpenInventory();
 
 public:
 	TArray<FItemData> Items;
