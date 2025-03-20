@@ -36,7 +36,7 @@ void ATablet_Log::BeginPlay()
 
 	if (Player)
 	{
-		Player->OnInteractLog.AddDynamic(this, &ATablet_Log::HandleInteract);
+		Player->OnInteract.AddDynamic(this, &ATablet_Log::HandleInteract);
 		Player->OnCancel.AddDynamic(this, &ATablet_Log::HandleClose);
 	}
 }

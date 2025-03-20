@@ -149,39 +149,7 @@ void APrimaryPlayerCharacter::HandleStaminaDepleted()
 
 void APrimaryPlayerCharacter::Interact()
 {
-	TArray<AActor*> FoundKeyPads;
-	TArray<AActor*> FoundLogs;
-
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AKeyPad::StaticClass(), FoundKeyPads);
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATablet_Log::StaticClass(), FoundLogs);
-
-	for (AActor* KeyPad : FoundKeyPads)
-	{
-		if (KeyPad)
-		{
-			if (AKeyPad* keypad = Cast<AKeyPad>(KeyPad))
-			{
-				if (keypad->bInteractable)
-				{
-					if (OnInteractKeyPad.IsBound()) OnInteractKeyPad.Broadcast();
-				}
-			}
-		}
-	}
-
-	for (AActor* Log : FoundLogs)
-	{
-		if (Log)
-		{
-			if (ATablet_Log* log = Cast<ATablet_Log>(Log))
-			{
-				if (log->bInteractable)
-				{
-					if (OnInteractLog.IsBound()) OnInteractLog.Broadcast();
-				}
-			}
-		}
-	}
+	if (OnInteract.IsBound()) OnInteract.Broadcast();
 }
 
 void APrimaryPlayerCharacter::Cancel()

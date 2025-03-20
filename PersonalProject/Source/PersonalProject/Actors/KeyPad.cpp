@@ -38,7 +38,7 @@ void AKeyPad::BeginPlay()
 	
 	if (Player)
 	{
-		Player->OnInteractKeyPad.AddDynamic(this, &AKeyPad::HandleKeyPadInteract);
+		Player->OnInteract.AddDynamic(this, &AKeyPad::HandleKeyPadInteract);
 		Player->OnCancel.AddDynamic(this, &AKeyPad::HandleStopViewKeyPad);
 	}
 
