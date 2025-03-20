@@ -20,7 +20,7 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
-	void RefreshSlot(FItemData RefreshItem);
+	void RefreshSlot(FItemData Item);
 
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -35,8 +35,6 @@ public:
 public:
 	UPROPERTY()
 	UInventoryUI* InventoryUI;
-	
-	FItemData* Item;
 	
 	int Index;
 };

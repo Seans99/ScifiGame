@@ -16,14 +16,14 @@ void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	
 }
 
-void UItemSlotUI::RefreshSlot(FItemData RefreshItem)
+void UItemSlotUI::RefreshSlot(FItemData Item)
 {
-	if (Item->ItemImage != nullptr)
+	if (Item.ItemImage != nullptr)
 	{
-		InventorySlotImage->SetBrushFromTexture(Item->ItemImage);
-		if (Item->bItemStackable)
+		InventorySlotImage->SetBrushFromTexture(Item.ItemImage);
+		if (Item.bItemStackable)
 		{
-			FText ItemAmountText = FText::FromString(FString::FromInt(Item->ItemAmount));
+			FText ItemAmountText = FText::FromString(FString::FromInt(Item.ItemAmount));
 			ItemAmount->SetText(ItemAmountText);
 		}
 		else

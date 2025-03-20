@@ -28,7 +28,6 @@ void UInventoryUI::RefreshInventory(UInventoryComponent* InventoryComp)
 		for (int i = 0; i < InventoryComp->Items.Num(); i++)
 		{
 			ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
-			ItemSlotWidget->Item = &InventoryComp->Items[i];
 			ItemSlotWidget->Index = i;
 			ItemSlotWidget->RefreshSlot(InventoryComp->Items[i]);
 			InventoryWrapBox->AddChild(ItemSlotWidget);

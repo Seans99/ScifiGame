@@ -35,6 +35,9 @@ public:
 	UFUNCTION()
 	void OpenInventory();
 
+	UFUNCTION()
+	void AddToInventory(FItemData NewItem);
+
 public:
 	TArray<FItemData> Items;
 

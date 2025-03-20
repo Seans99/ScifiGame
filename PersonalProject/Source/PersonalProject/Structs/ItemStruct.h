@@ -18,6 +18,17 @@ struct PERSONALPROJECT_API FItemData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 public:
+	FItemData()
+		: bItemInventory(false),
+		  bItemStackable(false),
+		  ItemAmount(0),
+		  ItemMesh(nullptr),
+		  ItemImage(nullptr),
+		  bItemHealAble(false),
+		  ItemHealAmount(0)
+	{}
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	bool bItemInventory;
 	

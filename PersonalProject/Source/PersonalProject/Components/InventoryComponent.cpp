@@ -1,5 +1,4 @@
 #include "InventoryComponent.h"
-
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
@@ -40,6 +39,7 @@ void UInventoryComponent::OpenInventory()
 	if (!InventoryWidget->IsInViewport())
 	{
 		InventoryWidget->AddToViewport();
+		InventoryWidget->RefreshInventory(this);
 		PlayerController->EnableMouse();
 	}
 	else
@@ -47,5 +47,10 @@ void UInventoryComponent::OpenInventory()
 		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
 		PlayerController->EnableMouse();
 	}
+}
+
+void UInventoryComponent::AddToInventory(FItemData NewItem)
+{
+	Items.Add(NewItem);
 }
 

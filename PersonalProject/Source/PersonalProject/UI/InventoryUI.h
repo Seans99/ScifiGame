@@ -52,5 +52,6 @@ public:
 	UItemSlotUI* ItemSlotWidget;
 
 private:
+	UPROPERTY()
 	APrimaryPlayerController* Controller;
 };
