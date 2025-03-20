@@ -43,7 +43,7 @@ public:
 
 	int CurrentIndex;
 	int MaxAmountPerItem = 10;
-	int InventorySize = 36;
+	int MaxInventorySize = 36;
 
 private:
 	UPROPERTY()

@@ -5,6 +5,8 @@
 #include "PersonalProject/Structs/ItemStruct.h"
 #include "ItemBase.generated.h"
 
+class APrimaryPlayerCharacter;
+
 class UStaticMeshComponent;
 class USphereComponent;
 class UWidgetComponent;
@@ -40,6 +42,9 @@ public:
 public:
 	FItemData GetItemData();
 
+	UFUNCTION()
+	void PickupItem();
+
 public:
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -54,4 +59,9 @@ public:
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
+
+private:
+	APrimaryPlayerCharacter* Player;
+
+	bool bPlayerInRange = false;
 };

@@ -2,6 +2,8 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "PersonalProject/Components/InventoryComponent.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 
 AItemBase::AItemBase()
@@ -23,7 +25,12 @@ AItemBase::AItemBase()
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Player = Cast<APrimaryPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player)
+	{
+		Player->OnInteract.AddDynamic(this, &AItemBase::PickupItem);
+	}
 }
 
 void AItemBase::Tick(float DeltaTime)
@@ -37,12 +44,22 @@ FItemData AItemBase::GetItemData()
 	return ItemData;
 }
 
+void AItemBase::PickupItem()
+{
+	if (bPlayerInRange)
+	{
+		Player->FindComponentByClass<UInventoryComponent>()->AddToInventory(GetItemData());
+		Destroy();
+	}
+}
+
 void AItemBase::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
 		KeyPrompt->SetVisibility(true);
+		bPlayerInRange = true;
 	}
 }
 
@@ -52,6 +69,7 @@ void AItemBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
 		KeyPrompt->SetVisibility(false);
+		bPlayerInRange = false;
 	}
 }
 

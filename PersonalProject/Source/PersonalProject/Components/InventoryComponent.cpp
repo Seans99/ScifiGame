@@ -24,8 +24,6 @@ void UInventoryComponent::BeginPlay()
 		UE_LOG(LogTemp, Display, TEXT("Player Valid"));
 		Player->OnInventory.AddDynamic(this, &UInventoryComponent::OpenInventory);
 	}
-	
-	Items.SetNum(InventorySize);
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -51,6 +49,9 @@ void UInventoryComponent::OpenInventory()
 
 void UInventoryComponent::AddToInventory(FItemData NewItem)
 {
-	Items.Add(NewItem);
+	if (Items.Num() < MaxInventorySize)
+	{
+		Items.Add(NewItem);
+	}
 }
 
