@@ -127,9 +127,14 @@ bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* Interacte
 
 bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
 {
+	if (Items[MaxInventorySize - 1].ItemImage)
+	{
+		return false;
+	}
+	
 	UE_LOG(LogTemp, Display, TEXT("CheckIfInventorySpace"));
 	Items.Insert(Item, CurrentIndex);
-	Items.RemoveAt((MaxInventorySize - CurrentIndex));
+	Items.RemoveAt((MaxInventorySize));
 	return true;
 }
 
