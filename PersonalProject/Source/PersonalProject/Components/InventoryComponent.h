@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PersonalProject/Actors/Items/ItemBase.h"
 #include "PersonalProject/Structs/ItemStruct.h"
 #include "InventoryComponent.generated.h"
 
@@ -36,7 +37,10 @@ public:
 	void OpenInventory();
 
 	UFUNCTION()
-	void AddToInventory(FItemData NewItem);
+	void AddToInventory(AItemBase* InteractedItem);
+
+	bool CheckIfStackable(FItemData& Item, AItemBase* InteractedItem);
+	bool CheckIfInventorySpace(FItemData& Item);
 
 public:
 	TArray<FItemData> Items;
