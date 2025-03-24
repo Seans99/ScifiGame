@@ -6,6 +6,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Components/SizeBox.h"
 #include "PersonalProject/Structs/ItemStruct.h"
 #include "ItemSlotUI.generated.h"
 
@@ -36,9 +37,24 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UButton* ItemButton;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	USizeBox* ItemUseBox;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UButton* UseBtn;
+
 public:
 	UFUNCTION()
 	void ItemHovered();
+
+	UFUNCTION()
+	void ItemUnhovered();
+
+	UFUNCTION()
+	void ItemMenu();
+
+	UFUNCTION()
+	void UseItem();
 
 public:
 	UPROPERTY()
@@ -47,4 +63,5 @@ public:
 	FItemData ItemData;
 	
 	int Index;
+
 };

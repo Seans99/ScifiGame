@@ -10,13 +10,18 @@
 void UItemSlotUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	
 	ItemButton->OnHovered.AddDynamic(this, &UItemSlotUI::ItemHovered);
+	ItemButton->OnUnhovered.AddDynamic(this, &UItemSlotUI::ItemUnhovered);
+	ItemButton->OnClicked.AddDynamic(this, &UItemSlotUI::ItemMenu);
+
+	UseBtn->OnClicked.AddDynamic(this, &UItemSlotUI::UseItem);
 }
 
 void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+
 }
 
 void UItemSlotUI::RefreshSlot(FItemData Item)
@@ -44,4 +49,25 @@ void UItemSlotUI::RefreshSlot(FItemData Item)
 void UItemSlotUI::ItemHovered()
 {
 	InventoryUI->SetItemDetails(ItemData.ItemName, ItemData.ItemDesc);
+}
+
+void UItemSlotUI::ItemUnhovered()
+{
+	if (ItemUseBox->IsVisible())
+	{
+		ItemUseBox->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UItemSlotUI::ItemMenu()
+{
+	if (ItemData.ItemImage)
+	{
+		ItemUseBox->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UItemSlotUI::UseItem()
+{
+	// Use item
 }
