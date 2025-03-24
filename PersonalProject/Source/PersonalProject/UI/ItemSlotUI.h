@@ -5,6 +5,7 @@
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 #include "PersonalProject/Structs/ItemStruct.h"
 #include "ItemSlotUI.generated.h"
 
@@ -32,9 +33,18 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UTextBlock* ItemAmount;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UButton* ItemButton;
+
+public:
+	UFUNCTION()
+	void ItemHovered();
+
 public:
 	UPROPERTY()
 	UInventoryUI* InventoryUI;
+
+	FItemData ItemData;
 	
 	int Index;
 };

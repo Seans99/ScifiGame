@@ -30,6 +30,7 @@ void UInventoryUI::RefreshInventory(UInventoryComponent* InventoryComp)
 			ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
 			ItemSlotWidget->Index = i;
 			ItemSlotWidget->RefreshSlot(InventoryComp->Items[i]);
+			ItemSlotWidget->InventoryUI = this;
 			InventoryWrapBox->AddChild(ItemSlotWidget);
 		}
 	}
@@ -39,4 +40,14 @@ void UInventoryUI::CloseInventory()
 {
 	Controller->DisableMouse();
 	this->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UInventoryUI::SetItemDetails(FText Name, FText Desc)
+{
+	ItemName->SetText(Name);
+	ItemDesc->SetText(Desc);
+
+	// Force immediate update
+	ItemName->SynchronizeProperties();
+	ItemDesc->SynchronizeProperties();
 }

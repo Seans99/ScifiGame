@@ -37,12 +37,12 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UButton* CloseBtn;
 
-	FText ItemNameText;
-	FText ItemDescText;
-
 public:
 	UFUNCTION()
 	void CloseInventory();
+
+public:
+	void SetItemDetails(FText Name, FText Desc);
 
 public:
 	UPROPERTY(EditAnywhere, Category = "UI")
