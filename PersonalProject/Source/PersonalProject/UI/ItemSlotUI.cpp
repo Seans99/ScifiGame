@@ -1,8 +1,4 @@
 #include "ItemSlotUI.h"
-
-#include <string>
-
-#include "IDetailTreeNode.h"
 #include "InventoryUI.h"
 #include "Components/Button.h"
 #include "PersonalProject/Structs/ItemStruct.h"

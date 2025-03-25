@@ -19,8 +19,7 @@ struct PERSONALPROJECT_API FItemData : public FTableRowBase
 
 public:
 	FItemData()
-		: bItemInventory(false),
-		  bItemStackable(false),
+		: bItemStackable(false),
 		  ItemAmount(0),
 		  ItemMesh(nullptr),
 		  ItemImage(nullptr),
@@ -29,9 +28,6 @@ public:
 	{}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	bool bItemInventory;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FText ItemName;
 
