@@ -55,7 +55,6 @@ void UInventoryComponent::OpenInventory()
 
 void UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 {
-	UE_LOG(LogTemp, Display, TEXT("AddToInventory"));
 	int Index = 0;
 	for (auto& Item : Items)
 	{
@@ -163,7 +162,7 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
 		return false;
 	}
 
-	AddItemToInventory(Item);
+	AddItemToInventoryArray(Item);
 
 	return true;
 }
@@ -217,7 +216,7 @@ bool UInventoryComponent::GetItemAtIndex(int Index, FItemData& Item)
 	return false;
 }
 
-void UInventoryComponent::AddItemToInventory(FItemData& Item)
+void UInventoryComponent::AddItemToInventoryArray(FItemData& Item)
 {
 	FTile Tile = ForEachIndex(Item, CurrentIndex);
 	int Index = TileToIndex(Tile);

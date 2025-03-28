@@ -46,7 +46,7 @@ public:
 	FTile IndexToTile(int Index) const;
 	int TileToIndex(FTile Tile) const;
 	bool GetItemAtIndex(int Index, FItemData& Item);
-	void AddItemToInventory(FItemData& Item);
+	void AddItemToInventoryArray(FItemData& Item);
 
 public:
 	TArray<FItemData> Items;
