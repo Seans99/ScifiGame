@@ -8,3 +8,4 @@ void UGUIBase::NativeConstruct()
 
 	GameMode = Cast<APrimaryGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 }
+

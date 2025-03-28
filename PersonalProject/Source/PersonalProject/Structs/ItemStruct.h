@@ -24,7 +24,8 @@ public:
 		  ItemMesh(nullptr),
 		  ItemImage(nullptr),
 		  bItemHealAble(false),
-		  ItemHealAmount(0)
+		  ItemHealAmount(0),
+		  GridDimensions(1, 1)
 	{}
 
 public:
@@ -51,4 +52,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	int ItemHealAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	FIntPoint GridDimensions;
 };

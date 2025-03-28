@@ -2,11 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GUIBase.h"
-#include "ItemSlotUI.h"
 #include "InventoryUI.generated.h"
 
 class UInventoryComponent;
+class UInventoryGrid;
 class APrimaryPlayerController;
+class UItemSlotUI;
 
 class UTextBlock;
 class UButton;
@@ -18,11 +19,9 @@ class PERSONALPROJECT_API UInventoryUI : public UGUIBase
 	GENERATED_BODY()
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
-public:
-	void RefreshInventory(UInventoryComponent* InventoryComp);
 	
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -32,11 +31,17 @@ public:
 	UTextBlock* ItemDesc;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	UWrapBox* InventoryWrapBox;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UButton* CloseBtn;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UInventoryGrid* InventoryGrid;
+
+public:
+	UPROPERTY()
+	UInventoryComponent* InventoryComponent;
+
+	int TileSize;
+	
 public:
 	UFUNCTION()
 	void CloseInventory();
@@ -44,14 +49,13 @@ public:
 public:
 	void SetItemDetails(FText Name, FText Desc);
 
-public:
-	UPROPERTY(EditAnywhere, Category = "UI")
-	TSubclassOf<UItemSlotUI> ItemSlotWidgetClass;
-
-	UPROPERTY()
-	UItemSlotUI* ItemSlotWidget;
+private:
+	UFUNCTION()
+	void InitializeInventory();
 
 private:
 	UPROPERTY()
 	APrimaryPlayerController* Controller;
+
+	FTimerHandle TimerHandle;
 };

@@ -1,10 +1,23 @@
 #include "InventoryUI.h"
-#include "PersonalProject/Components/InventoryComponent.h"
-#include "VisualizeTexture.h"
+
+#include "ItemSlotUI.h"
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
+#include "UIComponents/InventoryGrid.h"
+
+void UInventoryUI::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UInventoryUI::InitializeInventory, 0.3f, false);
+}
+
+void UInventoryUI::InitializeInventory()
+{
+	InventoryGrid->InitializeGrid(InventoryComponent, TileSize);
+}
 
 void UInventoryUI::NativeConstruct()
 {
@@ -18,22 +31,6 @@ void UInventoryUI::NativeConstruct()
 void UInventoryUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-}
-
-void UInventoryUI::RefreshInventory(UInventoryComponent* InventoryComp)
-{
-	if (InventoryComp)
-	{
-		InventoryWrapBox->ClearChildren();
-		for (int i = 0; i < InventoryComp->Items.Num(); i++)
-		{
-			ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
-			ItemSlotWidget->Index = i;
-			ItemSlotWidget->RefreshSlot(InventoryComp->Items[i]);
-			ItemSlotWidget->InventoryUI = this;
-			InventoryWrapBox->AddChild(ItemSlotWidget);
-		}
-	}
 }
 
 void UInventoryUI::CloseInventory()
@@ -51,3 +48,5 @@ void UInventoryUI::SetItemDetails(FText Name, FText Desc)
 	ItemName->SynchronizeProperties();
 	ItemDesc->SynchronizeProperties();
 }
+
+

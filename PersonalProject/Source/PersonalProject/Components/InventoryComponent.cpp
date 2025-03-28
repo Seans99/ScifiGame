@@ -10,7 +10,6 @@
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 void UInventoryComponent::BeginPlay()
@@ -19,8 +18,10 @@ void UInventoryComponent::BeginPlay()
 
 	Player = Cast<APrimaryPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	PlayerController = Cast<APrimaryPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	
+
 	InventoryWidget = CreateWidget<UInventoryUI>(GetWorld(), InventoryWidgetClass);
+	InventoryWidget->InventoryComponent = this;
+	InventoryWidget->TileSize = TileSize;
 
 	if (Player)
 	{
@@ -28,13 +29,14 @@ void UInventoryComponent::BeginPlay()
 		Player->OnInventory.AddDynamic(this, &UInventoryComponent::OpenInventory);
 	}
 
-	Items.SetNum(MaxInventorySize);
+	int size = Columns * Rows;
+	Items.SetNum(size);
 }
 
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                        FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 }
 
 void UInventoryComponent::OpenInventory()
@@ -42,7 +44,6 @@ void UInventoryComponent::OpenInventory()
 	if (!InventoryWidget->IsInViewport())
 	{
 		InventoryWidget->AddToViewport();
-		InventoryWidget->RefreshInventory(this);
 		PlayerController->EnableMouse();
 	}
 	else
@@ -91,11 +92,10 @@ void UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 				bCanAdd = true;
 			}
 		}
-		
+
 		if (bCanAdd)
 		{
 			InteractedItem->Destroy();
-			InventoryWidget->RefreshInventory(this);
 			Index++;
 			bCanAdd = false;
 			break;
@@ -127,14 +127,101 @@ bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* Interacte
 
 bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
 {
-	if (Items[MaxInventorySize - 1].ItemImage)
+	if (Items.IsValidIndex(MaxInventorySize - 1) && Items[MaxInventorySize - 1].ItemImage)
 	{
 		return false;
 	}
-	
-	UE_LOG(LogTemp, Display, TEXT("CheckIfInventorySpace"));
-	Items.Insert(Item, CurrentIndex);
-	Items.RemoveAt((MaxInventorySize));
+
+	FTile ItemTile = ForEachIndex(Item, CurrentIndex);
+	if (ItemTile.X >= 0 && ItemTile.Y >= 0 && ItemTile.X < Columns && ItemTile.Y < Rows)
+	{
+		int Index = TileToIndex(ItemTile);
+		FItemData ItemData;
+		bool bHasFoundItem = GetItemAtIndex(Index, ItemData);
+		if (bHasFoundItem)
+		{
+			bHasFoundItem = false;
+			for (auto i : Items)
+			{
+				if (i.ItemName.EqualTo(ItemData.ItemName))
+				{
+					bHasFoundItem = true;
+				}
+			}
+			if (!bHasFoundItem)
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+
+	AddItemToInventory(Item);
+
 	return true;
 }
 
+FTile UInventoryComponent::ForEachIndex(FItemData& Item, int Index)
+{
+	FTile Tile = IndexToTile(Index);
+	FIntPoint Dimensions = Item.GridDimensions;
+	int FirstIndexX = Tile.X;
+	int LastIndexX = FirstIndexX + (Dimensions.X - 1);
+	int FirstIndexY = Tile.Y;
+	int LastIndexY = FirstIndexY + (Dimensions.Y - 1);
+	FTile ItemTile;
+
+	for (int i = FirstIndexX; i < LastIndexX; i++)
+	{
+		for (int j = FirstIndexY; j < LastIndexY; j++)
+		{
+			ItemTile = FTile(i, j);
+		}
+	}
+
+	return ItemTile;
+}
+
+
+//Get X and Y coordinate to Tile
+FTile UInventoryComponent::IndexToTile(int Index) const
+{
+	int X = Index % Columns;
+	int Y = Index / Columns;
+
+	FTile Tile = FTile(X, Y);
+	return Tile;
+}
+
+int UInventoryComponent::TileToIndex(FTile Tile) const
+{
+	int Index = Tile.X + (Tile.Y * Columns);
+	return Index;
+}
+
+bool UInventoryComponent::GetItemAtIndex(int Index, FItemData& Item)
+{
+	if (Items.IsValidIndex(Index))
+	{
+		Item = Items[Index];
+		return true;
+	}
+
+	return false;
+}
+
+void UInventoryComponent::AddItemToInventory(FItemData& Item)
+{
+	FTile Tile = ForEachIndex(Item, CurrentIndex);
+	int Index = TileToIndex(Tile);
+	Items.Insert(Item, Index);
+	bIsDirty = true;
+	UE_LOG(LogTemp, Display, TEXT("Item Added!"));
+}
