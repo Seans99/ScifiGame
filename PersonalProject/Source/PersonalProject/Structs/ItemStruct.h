@@ -55,4 +55,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FIntPoint GridDimensions;
+
+	FItemData* ItemData;
+	bool operator==(const FItemData& Other) const
+	{
+		return ItemData == Other.ItemData;
+	}
 };

@@ -12,19 +12,25 @@
 
 class UInventoryUI;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRemoveSignature);
+
 UCLASS()
 class PERSONALPROJECT_API UItemSlotUI : public UGUIBase
 {
 	GENERATED_BODY()
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
-	void RefreshSlot(FItemData Item);
+	void RefreshSlot();
 
 public:
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	USizeBox* ItemSlotBox;
+	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UImage* InventorySlotImage;
 
@@ -56,6 +62,12 @@ public:
 	UFUNCTION()
 	void UseItem();
 
+	UFUNCTION()
+	void InitializeSlot();
+
+public:
+	FRemoveSignature OnRemove;
+
 public:
 	UPROPERTY()
 	UInventoryUI* InventoryUI;
@@ -64,4 +76,10 @@ public:
 	
 	int Index;
 
+	float TileSize;
+
+private:
+	FTimerHandle TimerHandle;
+	
+	FVector2D Size;
 };

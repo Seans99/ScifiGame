@@ -37,6 +37,11 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                         FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bIsDirty)
+	{
+		if (OnInventoryChanged.IsBound()) OnInventoryChanged.Broadcast();
+	}
 }
 
 void UInventoryComponent::OpenInventory()
@@ -163,7 +168,6 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
 	}
 
 	AddItemToInventoryArray(Item);
-
 	return true;
 }
 
@@ -222,5 +226,25 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item)
 	int Index = TileToIndex(Tile);
 	Items.Insert(Item, Index);
 	bIsDirty = true;
-	UE_LOG(LogTemp, Display, TEXT("Item Added!"));
+}
+
+void UInventoryComponent::RemoveItem(FItemData& Item)
+{
+	
+}
+
+TArray<FItemData> UInventoryComponent::GetAllItems()
+{
+	TArray<FItemData> AllItems;
+	int Index = 0;
+	for (auto Item : Items)
+	{
+		if (!AllItems.Contains(Item))
+		{
+			AllItems.Add(Item);
+			Index++;
+		}
+	}
+
+	return AllItems;
 }

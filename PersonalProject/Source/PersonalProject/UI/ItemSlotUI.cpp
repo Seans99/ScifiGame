@@ -3,15 +3,22 @@
 #include "Components/Button.h"
 #include "PersonalProject/Structs/ItemStruct.h"
 
+void UItemSlotUI::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UItemSlotUI::InitializeSlot, 0.3f, false);
+}
+
 void UItemSlotUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	ItemButton->OnHovered.AddDynamic(this, &UItemSlotUI::ItemHovered);
-	ItemButton->OnUnhovered.AddDynamic(this, &UItemSlotUI::ItemUnhovered);
-	ItemButton->OnClicked.AddDynamic(this, &UItemSlotUI::ItemMenu);
+	//ItemButton->OnHovered.AddDynamic(this, &UItemSlotUI::ItemHovered);
+	//ItemButton->OnUnhovered.AddDynamic(this, &UItemSlotUI::ItemUnhovered);
+	//ItemButton->OnClicked.AddDynamic(this, &UItemSlotUI::ItemMenu);
 
-	UseBtn->OnClicked.AddDynamic(this, &UItemSlotUI::UseItem);
+	//UseBtn->OnClicked.AddDynamic(this, &UItemSlotUI::UseItem);
 }
 
 void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -20,15 +27,19 @@ void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 }
 
-void UItemSlotUI::RefreshSlot(FItemData Item)
+void UItemSlotUI::RefreshSlot()
 {
-	if (Item.ItemImage != nullptr)
+	if (ItemData.ItemImage != nullptr)
 	{
-		ItemData = Item;
-		InventorySlotImage->SetBrushFromTexture(Item.ItemImage);
-		if (Item.bItemStackable)
+		Size = FVector2D(ItemData.GridDimensions.X * TileSize, ItemData.GridDimensions.Y * TileSize);
+		ItemSlotBox->SetWidthOverride(Size.X);
+		ItemSlotBox->SetHeightOverride(Size.Y);
+
+		InventorySlotImage->SetDesiredSizeOverride(Size);
+		InventorySlotImage->SetBrushFromTexture(ItemData.ItemImage);
+		if (ItemData.bItemStackable)
 		{
-			FText ItemAmountText = FText::FromString(FString::FromInt(Item.ItemAmount));
+			FText ItemAmountText = FText::FromString(FString::FromInt(ItemData.ItemAmount));
 			ItemAmount->SetText(ItemAmountText);
 		}
 		else
@@ -66,4 +77,9 @@ void UItemSlotUI::ItemMenu()
 void UItemSlotUI::UseItem()
 {
 	// Use item
+}
+
+void UItemSlotUI::InitializeSlot()
+{
+	RefreshSlot();
 }

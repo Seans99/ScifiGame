@@ -6,6 +6,7 @@
 #include "InventoryGrid.generated.h"
 
 class UInventoryComponent;
+class UItemSlotUI;
 
 class UCanvasPanel;
 class UBorder;
@@ -37,7 +38,21 @@ public:
 	UCanvasPanel* GridCanvasPanel;
 
 public:
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UItemSlotUI> ItemSlotWidgetClass;
+
+	UPROPERTY()
+	UItemSlotUI* ItemSlotWidget;
+
+public:
 	void InitializeGrid(UInventoryComponent* InventoryComponent, float TileSize);
+
+public:
+	UFUNCTION()
+	void Remove();
+
+	UFUNCTION()
+	void Refresh();
 
 private:
 	void CreateLineSegments();

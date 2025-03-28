@@ -12,6 +12,8 @@ class APrimaryPlayerController;
 
 class UInventoryUI;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryChangedSignature);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PERSONALPROJECT_API UInventoryComponent : public UActorComponent
 {
@@ -40,6 +42,8 @@ public:
 	UFUNCTION()
 	void AddToInventory(AItemBase* InteractedItem);
 
+	TArray<FItemData> GetAllItems();
+
 	bool CheckIfStackable(FItemData& Item, AItemBase* InteractedItem);
 	bool CheckIfInventorySpace(FItemData& Item);
 	FTile ForEachIndex(FItemData& Item, int Index);
@@ -47,10 +51,15 @@ public:
 	int TileToIndex(FTile Tile) const;
 	bool GetItemAtIndex(int Index, FItemData& Item);
 	void AddItemToInventoryArray(FItemData& Item);
+	void RemoveItem(FItemData& Item);
 
 public:
+	FOnInventoryChangedSignature OnInventoryChanged;
+
+private:
 	TArray<FItemData> Items;
 
+public:
 	int CurrentIndex;
 	int MaxAmountPerItem = 10;
 	int MaxInventorySize;
