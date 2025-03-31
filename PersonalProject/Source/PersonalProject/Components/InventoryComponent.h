@@ -40,13 +40,13 @@ public:
 	void OpenInventory();
 
 	UFUNCTION()
-	void AddToInventory(AItemBase* InteractedItem);
+	bool AddToInventory(AItemBase* InteractedItem);
 
 	TArray<FItemData> GetAllItems();
 
 	bool CheckIfStackable(FItemData& Item, AItemBase* InteractedItem);
 	bool CheckIfInventorySpace(FItemData& Item);
-	FTile ForEachIndex(FItemData& Item, int Index);
+	TArray<FTile> ForEachIndex(FItemData& Item);
 	FTile IndexToTile(int Index) const;
 	int TileToIndex(FTile Tile) const;
 	bool GetItemAtIndex(int Index, FItemData& Item);

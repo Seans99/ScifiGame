@@ -94,15 +94,15 @@ void UInventoryGrid::CreateLineSegments()
 void UInventoryGrid::Refresh()
 {
 	GridCanvasPanel->ClearChildren();
-	int Index = 0;
-	for (auto Item : InventoryComp->GetAllItems())
+	TArray<FItemData> Items = InventoryComp->GetAllItems();
+	for (int i = 0; i < Items.Num(); i++)
 	{
 		ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
 		ItemSlotWidget->TileSize = TileSize;
-		ItemSlotWidget->ItemData = Item;
+		ItemSlotWidget->ItemData = Items[i];
 		ItemSlotWidget->OnRemove.AddDynamic(this, &UInventoryGrid::Remove);
 		GridCanvasPanel->AddChild(ItemSlotWidget);
-		FTile Tile = InventoryComp->IndexToTile(Index);
+		FTile Tile = InventoryComp->IndexToTile(i);
 		UPanelSlot* ItemSlot = ItemSlotWidget->Slot;
 		if (ItemSlot)
 		{
@@ -112,7 +112,6 @@ void UInventoryGrid::Refresh()
 				CanvasItemSlot->SetPosition(FVector2D(Tile.X * TileSize, Tile.Y * TileSize));
 			}
 		}
-		Index++;
 	}
 }
 

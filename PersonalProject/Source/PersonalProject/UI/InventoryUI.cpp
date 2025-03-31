@@ -4,6 +4,7 @@
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "Kismet/GameplayStatics.h"
+#include "PersonalProject/Components/InventoryComponent.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
 #include "UIComponents/InventoryGrid.h"
 
