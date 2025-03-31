@@ -115,6 +115,7 @@ bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* Interacte
 		if (SumItems <= MaxAmountPerItem)
 		{
 			Item.ItemAmount = SumItems;
+			bIsDirty = true;
 			return true;
 		}
 		else
@@ -140,9 +141,9 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
 			bool bHasFoundItem = GetItemAtIndex(Index, ItemData);
 			if (bHasFoundItem)
 			{
-				if (ItemData.ItemImage != nullptr)
+				if (ItemData.bInInventory)
 				{
-					
+					return false;
 				}
 			}
 			else
@@ -216,6 +217,7 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item)
 		int Index = TileToIndex(Tile);
 		if (Items.IsValidIndex(Index))
 		{
+			Item.bInInventory = true;
 			Items[Index] = Item;
 		}
 	}

@@ -29,7 +29,7 @@ void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UItemSlotUI::RefreshSlot()
 {
-	if (ItemData.ItemImage != nullptr)
+	if (ItemData.bInInventory)
 	{
 		Size = FVector2D(ItemData.GridDimensions.X * TileSize, ItemData.GridDimensions.Y * TileSize);
 		ItemSlotBox->SetWidthOverride(Size.X);

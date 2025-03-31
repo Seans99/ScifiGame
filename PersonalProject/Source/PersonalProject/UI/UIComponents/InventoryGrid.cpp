@@ -25,9 +25,10 @@ int32 UInventoryGrid::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 	{
 		TArray<FVector2D> LinePoints;
 
-		FGeometry CachedGeom = GridBorder->GetCachedGeometry();
 		LinePoints.Add(Line.Start + FVector2D(0, 0));
 		LinePoints.Add(Line.End + FVector2D(0, 0));
+
+		FLinearColor CustomColor(0.033105f, 0.097587f, 0.130136f, 0.901961f);
 		
 		FSlateDrawElement::MakeLines(
 		OutDrawElements,
@@ -35,7 +36,7 @@ int32 UInventoryGrid::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 		AllottedGeometry.ToPaintGeometry(),
 		LinePoints,
 		ESlateDrawEffect::None,
-		FLinearColor::White,  // Line Color
+		CustomColor,  // Line Color
 		true,  // Anti-aliasing
 		2.0f   // Thickness
 		);
