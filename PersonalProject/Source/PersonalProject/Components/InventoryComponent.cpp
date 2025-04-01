@@ -1,4 +1,6 @@
 #include "InventoryComponent.h"
+
+#include "IDetailTreeNode.h"
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
@@ -231,7 +233,23 @@ UInventoryUI* UInventoryComponent::GetInventoryWidget()
 	return InventoryWidget;
 }
 
-TArray<FItemData> UInventoryComponent::GetAllItems()
+TMap<FItemData*, FTile> UInventoryComponent::GetAllItems()
 {
-	return Items;
+	TMap<FItemData*, FTile> AllItems;
+	FItemData* CurrentItem;
+	for (int i = 0; i < Items.Num(); i++)
+	{
+		CurrentItem = &Items[i];
+		if (CurrentItem->bInInventory)
+		{
+			if (!AllItems.Contains(CurrentItem))
+			{
+				FTile Tile = IndexToTile(i);
+				AllItems.Add(CurrentItem, Tile);
+				
+			}
+		}
+	}
+	
+	return AllItems;
 }

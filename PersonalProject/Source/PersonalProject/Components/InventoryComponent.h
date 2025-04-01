@@ -42,7 +42,7 @@ public:
 	UFUNCTION()
 	bool AddToInventory(AItemBase* InteractedItem);
 
-	TArray<FItemData> GetAllItems();
+	TMap<FItemData*, FTile> GetAllItems();
 
 	bool CheckIfStackable(FItemData& Item, AItemBase* InteractedItem);
 	bool CheckIfInventorySpace(FItemData& Item);

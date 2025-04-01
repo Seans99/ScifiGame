@@ -33,17 +33,17 @@ void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UItemSlotUI::RefreshSlot()
 {
-	if (ItemData.bInInventory)
+	if (ItemData->bInInventory)
 	{
-		Size = FVector2D((ItemData.GridDimensions.X * TileSize), (ItemData.GridDimensions.Y * TileSize));
+		Size = FVector2D((ItemData->GridDimensions.X * TileSize), (ItemData->GridDimensions.Y * TileSize));
 		ItemSlotBox->SetWidthOverride(Size.X);
 		ItemSlotBox->SetHeightOverride(Size.Y);
 
 		InventorySlotImage->SetDesiredSizeOverride(Size);
-		InventorySlotImage->SetBrushFromTexture(ItemData.ItemImage);
-		if (ItemData.bItemStackable)
+		InventorySlotImage->SetBrushFromTexture(ItemData->ItemImage);
+		if (ItemData->bItemStackable)
 		{
-			FText ItemAmountText = FText::FromString(FString::FromInt(ItemData.ItemAmount));
+			FText ItemAmountText = FText::FromString(FString::FromInt(ItemData->ItemAmount));
 			ItemAmount->SetText(ItemAmountText);
 		}
 		else
@@ -59,7 +59,7 @@ void UItemSlotUI::RefreshSlot()
 
 void UItemSlotUI::ItemHovered()
 {
-	InventoryUI->SetItemDetails(ItemData.ItemName, ItemData.ItemDesc);
+	InventoryUI->SetItemDetails(ItemData->ItemName, ItemData->ItemDesc);
 }
 
 void UItemSlotUI::ItemUnhovered()

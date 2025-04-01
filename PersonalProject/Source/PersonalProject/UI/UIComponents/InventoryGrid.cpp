@@ -96,25 +96,25 @@ void UInventoryGrid::CreateLineSegments()
 void UInventoryGrid::Refresh()
 {
 	GridCanvasPanel->ClearChildren();
-	TArray<FItemData> Items = InventoryComp->GetAllItems();
-	for (int i = 0; i < Items.Num(); i++)
+	TMap<FItemData*, FTile> Items = InventoryComp->GetAllItems();
+
+	for (TMap<FItemData*, FTile>::TIterator It(Items); It; ++It)
 	{
-		if (Items[i].bInInventory)
+		if (It.Key()->bInInventory)
 		{
 			ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
 			ItemSlotWidget->TileSize = TileSize;
-			ItemSlotWidget->ItemData = Items[i];
+			ItemSlotWidget->ItemData = It.Key();
 			ItemSlotWidget->InventoryComponent = InventoryComp;
 			ItemSlotWidget->OnRemove.BindUObject(this, &UInventoryGrid::Remove); // Call using OnRemove.ExecuteIfBound(Item)
 			GridCanvasPanel->AddChild(ItemSlotWidget);
-			FTile Tile = InventoryComp->IndexToTile(i);
 			UPanelSlot* ItemSlot = ItemSlotWidget->Slot;
 			if (ItemSlot)
 			{
 				if (UCanvasPanelSlot* CanvasItemSlot = Cast<UCanvasPanelSlot>(ItemSlot))
 				{
 					CanvasItemSlot->SetAutoSize(true);
-					CanvasItemSlot->SetPosition(FVector2D(Tile.X * TileSize, Tile.Y * TileSize));
+					CanvasItemSlot->SetPosition(FVector2D(It.Value().X * TileSize, It.Value().Y * TileSize));
 				}
 			}
 		}

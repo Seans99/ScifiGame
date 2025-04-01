@@ -64,7 +64,7 @@ public:
 	UPROPERTY()
 	UInventoryComponent* InventoryComponent;
 
-	FItemData ItemData;
+	FItemData* ItemData;
 	
 	int Index;
 
