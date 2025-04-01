@@ -45,12 +45,12 @@ public:
 	TMap<FItemData*, FTile> GetAllItems();
 
 	bool CheckIfStackable(FItemData& Item, AItemBase* InteractedItem);
-	bool CheckIfInventorySpace(FItemData& Item);
-	TArray<FTile> ForEachIndex(FItemData& Item);
+	bool CheckIfInventorySpace(FItemData& Item, int Index);
+	TArray<FTile> ForEachIndex(FItemData& Item, int Index);
 	FTile IndexToTile(int Index) const;
 	int TileToIndex(FTile Tile) const;
 	bool GetItemAtIndex(int Index, FItemData& Item);
-	void AddItemToInventoryArray(FItemData& Item);
+	void AddItemToInventoryArray(FItemData& Item, int Index);
 	void RemoveItem(FItemData& Item);
 
 	UInventoryUI* GetInventoryWidget();
@@ -62,7 +62,6 @@ private:
 	TArray<FItemData> Items;
 
 public:
-	int CurrentIndex;
 	int MaxAmountPerItem = 10;
 	int MaxInventorySize;
 

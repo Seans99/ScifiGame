@@ -1,6 +1,6 @@
 #include "InventoryComponent.h"
 
-#include "IDetailTreeNode.h"
+#include "IContentBrowserSingleton.h"
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
@@ -64,11 +64,9 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 		UE_LOG(LogTemp, Warning, TEXT("InteractedItem is null!"));
 		return false;
 	}
-
 	
 	for (int i = 0; i < Items.Num(); ++i)
 	{
-		CurrentIndex = i;
 		bool bCanAdd = false;
 
 		if (InteractedItem->ItemData.bItemStackable)
@@ -82,18 +80,18 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 			}
 			else
 			{
-				if (CheckIfInventorySpace(InteractedItem->ItemData))
+				if (CheckIfInventorySpace(InteractedItem->ItemData, i))
 				{
-					AddItemToInventoryArray(InteractedItem->ItemData);
+					AddItemToInventoryArray(InteractedItem->ItemData, i);
 					bCanAdd = true;
 				}
 			}
 		}
 		else
 		{
-			if (CheckIfInventorySpace(InteractedItem->ItemData))
+			if (CheckIfInventorySpace(InteractedItem->ItemData, i))
 			{
-				AddItemToInventoryArray(InteractedItem->ItemData);
+				AddItemToInventoryArray(InteractedItem->ItemData, i);
 				bCanAdd = true;
 			}
 		}
@@ -129,16 +127,16 @@ bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* Interacte
 	return false;
 }
 
-bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
+bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 {
-	TArray<FTile> Tiles = ForEachIndex(Item);
-	for (auto Tile : Tiles)
+	TArray<FTile> Tiles = ForEachIndex(Item, Index);
+	for (int i = 0; i < Tiles.Num(); ++i)
 	{
-		if (Tile.X >= 0 && Tile.Y >= 0 && Tile.X < Columns && Tile.Y < Rows)
+		if (Tiles[i].X >= 0 && Tiles[i].Y >= 0 && Tiles[i].X < Columns && Tiles[i].Y < Rows)
 		{
-			int Index = TileToIndex(Tile);
+			int TileIndex = TileToIndex(Tiles[i]);
 			FItemData ItemData;
-			bool bHasFoundItem = GetItemAtIndex(Index, ItemData);
+			bool bHasFoundItem = GetItemAtIndex(TileIndex, ItemData);
 			if (bHasFoundItem)
 			{
 				if (ItemData.bInInventory)
@@ -156,18 +154,19 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
 			return false;
 		}
 	}
+	
 	return true;
 }
 
-TArray<FTile> UInventoryComponent::ForEachIndex(FItemData& Item)
+TArray<FTile> UInventoryComponent::ForEachIndex(FItemData& Item, int Index)
 {
-	TArray<FTile> Tiles; 
-
-	FTile Tile = IndexToTile(CurrentIndex);
+	TArray<FTile> Tiles;
+	FTile Tile = IndexToTile(Index);
 	FIntPoint Dimensions = Item.GridDimensions;
+	FTile ReturnedTile;
 
-	int LastIndexX = Tile.X + (Dimensions.X - 1);
-	int LastIndexY = Tile.Y + (Dimensions.Y - 1);
+	int LastIndexX = Tile.X + Dimensions.X;
+	int LastIndexY = Tile.Y + Dimensions.Y;
 
 	for (int i = Tile.X; i < LastIndexX; ++i)
 	{
@@ -187,8 +186,7 @@ FTile UInventoryComponent::IndexToTile(int Index) const
 	int X = Index % Columns;
 	int Y = Index / Columns;
 
-	FTile Tile = FTile(X, Y);
-	return Tile;
+	return FTile(X, Y);
 }
 
 int UInventoryComponent::TileToIndex(FTile Tile) const
@@ -209,16 +207,24 @@ bool UInventoryComponent::GetItemAtIndex(int Index, FItemData& Item)
 	return false;
 }
 
-void UInventoryComponent::AddItemToInventoryArray(FItemData& Item)
+void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 {
-	TArray<FTile> Tiles = ForEachIndex(Item);
-	for (auto Tile : Tiles)
+	TArray<FTile> Tiles = ForEachIndex(Item, Index);
+	UE_LOG(LogTemp, Warning, TEXT("Tiles: %d"), Tiles.Num());
+	for (int i = 0; i < Tiles.Num(); ++i)
 	{
-		int Index = TileToIndex(Tile);
-		if (Items.IsValidIndex(Index))
+		int TileIndex = TileToIndex(Tiles[i]);
+		if (i == 0)
 		{
-			Item.bInInventory = true;
-			Items[Index] = Item;
+			if (Items.IsValidIndex(TileIndex))
+			{
+				Item.bInInventory = true;
+				Items[TileIndex] = Item;
+			}
+		}
+		else
+		{
+			Items[TileIndex].bInInventory = true;
 		}
 	}
 }
@@ -246,7 +252,6 @@ TMap<FItemData*, FTile> UInventoryComponent::GetAllItems()
 			{
 				FTile Tile = IndexToTile(i);
 				AllItems.Add(CurrentItem, Tile);
-				
 			}
 		}
 	}

@@ -100,7 +100,7 @@ void UInventoryGrid::Refresh()
 
 	for (TMap<FItemData*, FTile>::TIterator It(Items); It; ++It)
 	{
-		if (It.Key()->bInInventory)
+		if (It.Key()->ItemImage != nullptr)
 		{
 			ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
 			ItemSlotWidget->TileSize = TileSize;
