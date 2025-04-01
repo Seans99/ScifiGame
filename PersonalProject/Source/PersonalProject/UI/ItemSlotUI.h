@@ -11,6 +11,9 @@
 #include "ItemSlotUI.generated.h"
 
 class UInventoryUI;
+class UInventoryComponent;
+
+DECLARE_DELEGATE_OneParam(FRemoveSignature, FItemData&);
 
 UCLASS()
 class PERSONALPROJECT_API UItemSlotUI : public UGUIBase
@@ -18,13 +21,17 @@ class PERSONALPROJECT_API UItemSlotUI : public UGUIBase
 	GENERATED_BODY()
 
 protected:
+	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
-	void RefreshSlot(FItemData Item);
+	void RefreshSlot();
 
 public:
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	USizeBox* ItemSlotBox;
+	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UImage* InventorySlotImage;
 
@@ -37,12 +44,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UButton* ItemButton;
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	USizeBox* ItemUseBox;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	UButton* UseBtn;
-
 public:
 	UFUNCTION()
 	void ItemHovered();
@@ -51,17 +52,26 @@ public:
 	void ItemUnhovered();
 
 	UFUNCTION()
-	void ItemMenu();
+	void InitializeSlot();
 
-	UFUNCTION()
-	void UseItem();
+public:
+	FRemoveSignature OnRemove;
 
 public:
 	UPROPERTY()
 	UInventoryUI* InventoryUI;
 
-	FItemData ItemData;
+	UPROPERTY()
+	UInventoryComponent* InventoryComponent;
+
+	FItemData* ItemData;
 	
 	int Index;
 
+	float TileSize;
+
+private:
+	FTimerHandle TimerHandle;
+	
+	FVector2D Size;
 };

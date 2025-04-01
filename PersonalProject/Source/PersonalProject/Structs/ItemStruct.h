@@ -19,15 +19,21 @@ struct PERSONALPROJECT_API FItemData : public FTableRowBase
 
 public:
 	FItemData()
-		: bItemStackable(false),
+		:
+		  bInInventory(false),
+	      bItemStackable(false),
 		  ItemAmount(0),
 		  ItemMesh(nullptr),
 		  ItemImage(nullptr),
 		  bItemHealAble(false),
-		  ItemHealAmount(0)
+		  ItemHealAmount(0),
+		  GridDimensions(1, 1)
 	{}
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	bool bInInventory;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FText ItemName;
 
@@ -51,4 +57,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	int ItemHealAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	FIntPoint GridDimensions;
+
+	FItemData* ItemData;
+	bool operator==(const FItemData& Other) const
+	{
+		return ItemData == Other.ItemData;
+	}
 };

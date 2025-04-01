@@ -1,7 +1,6 @@
 #include "InventoryComponent.h"
 
-#include <functional>
-
+#include "IContentBrowserSingleton.h"
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
@@ -10,7 +9,6 @@
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 void UInventoryComponent::BeginPlay()
@@ -19,22 +17,30 @@ void UInventoryComponent::BeginPlay()
 
 	Player = Cast<APrimaryPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	PlayerController = Cast<APrimaryPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	Items.SetNum((Columns * Rows));
 	
 	InventoryWidget = CreateWidget<UInventoryUI>(GetWorld(), InventoryWidgetClass);
+	InventoryWidget->InventoryComponent = this;
+	InventoryWidget->TileSize = TileSize;
 
 	if (Player)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Player Valid"));
 		Player->OnInventory.AddDynamic(this, &UInventoryComponent::OpenInventory);
 	}
-
-	Items.SetNum(MaxInventorySize);
 }
 
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                        FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (bIsDirty)
+	{
+		if (OnInventoryChanged.IsBound()) OnInventoryChanged.Broadcast();
+		bIsDirty = false;
+	}
 }
 
 void UInventoryComponent::OpenInventory()
@@ -42,7 +48,6 @@ void UInventoryComponent::OpenInventory()
 	if (!InventoryWidget->IsInViewport())
 	{
 		InventoryWidget->AddToViewport();
-		InventoryWidget->RefreshInventory(this);
 		PlayerController->EnableMouse();
 	}
 	else
@@ -52,60 +57,57 @@ void UInventoryComponent::OpenInventory()
 	}
 }
 
-void UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
+bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 {
-	UE_LOG(LogTemp, Display, TEXT("AddToInventory"));
-	int Index = 0;
-	for (auto& Item : Items)
+	if (InteractedItem == nullptr)
 	{
-		CurrentIndex = Index;
+		UE_LOG(LogTemp, Warning, TEXT("InteractedItem is null!"));
+		return false;
+	}
+	
+	for (int i = 0; i < Items.Num(); ++i)
+	{
 		bool bCanAdd = false;
+
 		if (InteractedItem->ItemData.bItemStackable)
 		{
-			if (Item.ItemName.EqualTo(InteractedItem->ItemData.ItemName))
+			if (Items[i].ItemName.EqualTo(InteractedItem->ItemData.ItemName))
 			{
-				if (CheckIfStackable(Item, InteractedItem))
+				if (CheckIfStackable(Items[i], InteractedItem))
 				{
 					bCanAdd = true;
-				}
-				else
-				{
-					if (CheckIfInventorySpace(InteractedItem->ItemData))
-					{
-						bCanAdd = true;
-					}
 				}
 			}
 			else
 			{
-				if (CheckIfInventorySpace(InteractedItem->ItemData))
+				if (CheckIfInventorySpace(InteractedItem->ItemData, i))
 				{
+					AddItemToInventoryArray(InteractedItem->ItemData, i);
 					bCanAdd = true;
 				}
 			}
 		}
 		else
 		{
-			if (CheckIfInventorySpace(InteractedItem->ItemData))
+			if (CheckIfInventorySpace(InteractedItem->ItemData, i))
 			{
+				AddItemToInventoryArray(InteractedItem->ItemData, i);
 				bCanAdd = true;
 			}
 		}
-		
+
 		if (bCanAdd)
 		{
-			InteractedItem->Destroy();
-			InventoryWidget->RefreshInventory(this);
-			Index++;
-			bCanAdd = false;
-			break;
+			bIsDirty = true;
+			return true;
 		}
 	}
+
+	return false;
 }
 
 bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* InteractedItem)
 {
-	UE_LOG(LogTemp, Display, TEXT("CheckIfStackable"));
 	if (Item.ItemAmount < MaxAmountPerItem)
 	{
 		int SumItems = Item.ItemAmount + InteractedItem->ItemData.ItemAmount;
@@ -125,16 +127,134 @@ bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* Interacte
 	return false;
 }
 
-bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item)
+bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 {
-	if (Items[MaxInventorySize - 1].ItemImage)
+	TArray<FTile> Tiles = ForEachIndex(Item, Index);
+	for (int i = 0; i < Tiles.Num(); ++i)
 	{
-		return false;
+		if (Tiles[i].X >= 0 && Tiles[i].Y >= 0 && Tiles[i].X < Columns && Tiles[i].Y < Rows)
+		{
+			int TileIndex = TileToIndex(Tiles[i]);
+			FItemData ItemData;
+			bool bHasFoundItem = GetItemAtIndex(TileIndex, ItemData);
+			if (bHasFoundItem)
+			{
+				if (ItemData.bInInventory)
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
-	UE_LOG(LogTemp, Display, TEXT("CheckIfInventorySpace"));
-	Items.Insert(Item, CurrentIndex);
-	Items.RemoveAt((MaxInventorySize));
 	return true;
 }
 
+TArray<FTile> UInventoryComponent::ForEachIndex(FItemData& Item, int Index)
+{
+	TArray<FTile> Tiles;
+	FTile Tile = IndexToTile(Index);
+	FIntPoint Dimensions = Item.GridDimensions;
+	FTile ReturnedTile;
+
+	int LastIndexX = Tile.X + Dimensions.X;
+	int LastIndexY = Tile.Y + Dimensions.Y;
+
+	for (int i = Tile.X; i < LastIndexX; ++i)
+	{
+		for (int j = Tile.Y; j < LastIndexY; ++j)
+		{
+			Tiles.Add(FTile(i, j));
+		}
+	}
+
+	return Tiles;
+}
+
+
+//Get X and Y coordinate to Tile
+FTile UInventoryComponent::IndexToTile(int Index) const
+{
+	int X = Index % Columns;
+	int Y = Index / Columns;
+
+	return FTile(X, Y);
+}
+
+int UInventoryComponent::TileToIndex(FTile Tile) const
+{
+	int Index = Tile.X + (Tile.Y * Columns);
+	return Index;
+}
+
+bool UInventoryComponent::GetItemAtIndex(int Index, FItemData& Item)
+{
+	if (Items.IsValidIndex(Index))
+	{
+		Item = Items[Index];
+		return true;
+	}
+
+	Item = FItemData();
+	return false;
+}
+
+void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
+{
+	TArray<FTile> Tiles = ForEachIndex(Item, Index);
+	UE_LOG(LogTemp, Warning, TEXT("Tiles: %d"), Tiles.Num());
+	for (int i = 0; i < Tiles.Num(); ++i)
+	{
+		int TileIndex = TileToIndex(Tiles[i]);
+		if (i == 0)
+		{
+			if (Items.IsValidIndex(TileIndex))
+			{
+				Item.bInInventory = true;
+				Items[TileIndex] = Item;
+			}
+		}
+		else
+		{
+			Items[TileIndex].bInInventory = true;
+		}
+	}
+}
+
+void UInventoryComponent::RemoveItem(FItemData& Item)
+{
+	
+}
+
+UInventoryUI* UInventoryComponent::GetInventoryWidget()
+{
+	return InventoryWidget;
+}
+
+TMap<FItemData*, FTile> UInventoryComponent::GetAllItems()
+{
+	TMap<FItemData*, FTile> AllItems;
+	FItemData* CurrentItem;
+	for (int i = 0; i < Items.Num(); i++)
+	{
+		CurrentItem = &Items[i];
+		if (CurrentItem->bInInventory)
+		{
+			if (!AllItems.Contains(CurrentItem))
+			{
+				FTile Tile = IndexToTile(i);
+				AllItems.Add(CurrentItem, Tile);
+			}
+		}
+	}
+	
+	return AllItems;
+}

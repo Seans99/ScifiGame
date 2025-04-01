@@ -13,7 +13,7 @@ class PERSONALPROJECT_API UGUIBase : public UUserWidget
 
 protected:
 	virtual void NativeConstruct() override;
-
+	
 public:
 	APrimaryGameMode* GameMode;
 };
