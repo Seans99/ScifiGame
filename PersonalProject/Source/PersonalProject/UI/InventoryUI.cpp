@@ -12,7 +12,7 @@ void UInventoryUI::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UInventoryUI::InitializeInventory, 0.3f, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UInventoryUI::InitializeInventory, 0.1f, false);
 }
 
 void UInventoryUI::InitializeInventory()

@@ -11,6 +11,7 @@
 #include "ItemSlotUI.generated.h"
 
 class UInventoryUI;
+class UInventoryComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRemoveSignature);
 
@@ -43,24 +44,12 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UButton* ItemButton;
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	USizeBox* ItemUseBox;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	UButton* UseBtn;
-
 public:
 	UFUNCTION()
 	void ItemHovered();
 
 	UFUNCTION()
 	void ItemUnhovered();
-
-	UFUNCTION()
-	void ItemMenu();
-
-	UFUNCTION()
-	void UseItem();
 
 	UFUNCTION()
 	void InitializeSlot();
@@ -71,6 +60,9 @@ public:
 public:
 	UPROPERTY()
 	UInventoryUI* InventoryUI;
+
+	UPROPERTY()
+	UInventoryComponent* InventoryComponent;
 
 	FItemData ItemData;
 	

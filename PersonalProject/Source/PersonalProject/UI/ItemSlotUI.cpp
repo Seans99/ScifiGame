@@ -1,24 +1,28 @@
 #include "ItemSlotUI.h"
 #include "InventoryUI.h"
 #include "Components/Button.h"
+#include "Kismet/GameplayStatics.h"
+#include "PersonalProject/Components/InventoryComponent.h"
 #include "PersonalProject/Structs/ItemStruct.h"
 
 void UItemSlotUI::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UItemSlotUI::InitializeSlot, 0.3f, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UItemSlotUI::InitializeSlot, 0.1f, false);
 }
 
 void UItemSlotUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	//ItemButton->OnHovered.AddDynamic(this, &UItemSlotUI::ItemHovered);
-	//ItemButton->OnUnhovered.AddDynamic(this, &UItemSlotUI::ItemUnhovered);
-	//ItemButton->OnClicked.AddDynamic(this, &UItemSlotUI::ItemMenu);
 
-	//UseBtn->OnClicked.AddDynamic(this, &UItemSlotUI::UseItem);
+	if (InventoryComponent != nullptr)
+	{
+		InventoryUI = InventoryComponent->GetInventoryWidget();
+
+		ItemButton->OnHovered.AddDynamic(this, &UItemSlotUI::ItemHovered);
+		ItemButton->OnUnhovered.AddDynamic(this, &UItemSlotUI::ItemUnhovered);
+	}
 }
 
 void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -31,7 +35,7 @@ void UItemSlotUI::RefreshSlot()
 {
 	if (ItemData.bInInventory)
 	{
-		Size = FVector2D(ItemData.GridDimensions.X * TileSize, ItemData.GridDimensions.Y * TileSize);
+		Size = FVector2D((ItemData.GridDimensions.X * TileSize), (ItemData.GridDimensions.Y * TileSize));
 		ItemSlotBox->SetWidthOverride(Size.X);
 		ItemSlotBox->SetHeightOverride(Size.Y);
 
@@ -60,23 +64,9 @@ void UItemSlotUI::ItemHovered()
 
 void UItemSlotUI::ItemUnhovered()
 {
-	if (ItemUseBox->IsVisible())
-	{
-		ItemUseBox->SetVisibility(ESlateVisibility::Hidden);
-	}
-}
-
-void UItemSlotUI::ItemMenu()
-{
-	if (ItemData.ItemImage)
-	{
-		ItemUseBox->SetVisibility(ESlateVisibility::Visible);
-	}
-}
-
-void UItemSlotUI::UseItem()
-{
-	// Use item
+	FText Name = FText::FromString("");
+	FText Desc = FText::FromString("");
+	InventoryUI->SetItemDetails(Name, Desc);
 }
 
 void UItemSlotUI::InitializeSlot()

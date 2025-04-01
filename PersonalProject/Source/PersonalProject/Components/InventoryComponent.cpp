@@ -69,8 +69,6 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 		CurrentIndex = i;
 		bool bCanAdd = false;
 
-		UE_LOG(LogTemp, Display, TEXT("Looping through inventory: %d, Checking item: %s"), i, *InteractedItem->ItemData.ItemName.ToString());
-
 		if (InteractedItem->ItemData.bItemStackable)
 		{
 			if (Items[i].ItemName.EqualTo(InteractedItem->ItemData.ItemName))
@@ -100,6 +98,7 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 
 		if (bCanAdd)
 		{
+			bIsDirty = true;
 			return true;
 		}
 	}
@@ -115,7 +114,6 @@ bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* Interacte
 		if (SumItems <= MaxAmountPerItem)
 		{
 			Item.ItemAmount = SumItems;
-			bIsDirty = true;
 			return true;
 		}
 		else
@@ -221,12 +219,16 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item)
 			Items[Index] = Item;
 		}
 	}
-	bIsDirty = true;
 }
 
 void UInventoryComponent::RemoveItem(FItemData& Item)
 {
 	
+}
+
+UInventoryUI* UInventoryComponent::GetInventoryWidget()
+{
+	return InventoryWidget;
 }
 
 TArray<FItemData> UInventoryComponent::GetAllItems()

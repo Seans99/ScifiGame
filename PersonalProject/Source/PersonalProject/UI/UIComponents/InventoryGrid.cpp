@@ -60,11 +60,12 @@ void UInventoryGrid::InitializeGrid(UInventoryComponent* InventoryComponent, flo
 		{
 			FVector2D GridSize = FVector2D((InventoryComponent->Columns * NewTileSize) , (InventoryComponent->Rows * NewTileSize));
 			GridSlot->SetSize(GridSize);
-			CreateLineSegments();
-			Refresh();
-			InventoryComp->OnInventoryChanged.AddDynamic(this, &UInventoryGrid::Refresh);
 		}
 	}
+	
+	CreateLineSegments();
+	Refresh();
+	InventoryComp->OnInventoryChanged.AddDynamic(this, &UInventoryGrid::Refresh);
 }
 
 void UInventoryGrid::CreateLineSegments()
@@ -98,19 +99,23 @@ void UInventoryGrid::Refresh()
 	TArray<FItemData> Items = InventoryComp->GetAllItems();
 	for (int i = 0; i < Items.Num(); i++)
 	{
-		ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
-		ItemSlotWidget->TileSize = TileSize;
-		ItemSlotWidget->ItemData = Items[i];
-		ItemSlotWidget->OnRemove.AddDynamic(this, &UInventoryGrid::Remove);
-		GridCanvasPanel->AddChild(ItemSlotWidget);
-		FTile Tile = InventoryComp->IndexToTile(i);
-		UPanelSlot* ItemSlot = ItemSlotWidget->Slot;
-		if (ItemSlot)
+		if (Items[i].bInInventory)
 		{
-			if (UCanvasPanelSlot* CanvasItemSlot = Cast<UCanvasPanelSlot>(ItemSlot))
+			ItemSlotWidget = CreateWidget<UItemSlotUI>(GetWorld(), ItemSlotWidgetClass);
+			ItemSlotWidget->TileSize = TileSize;
+			ItemSlotWidget->ItemData = Items[i];
+			ItemSlotWidget->InventoryComponent = InventoryComp;
+			ItemSlotWidget->OnRemove.AddDynamic(this, &UInventoryGrid::Remove);
+			GridCanvasPanel->AddChild(ItemSlotWidget);
+			FTile Tile = InventoryComp->IndexToTile(i);
+			UPanelSlot* ItemSlot = ItemSlotWidget->Slot;
+			if (ItemSlot)
 			{
-				CanvasItemSlot->SetAutoSize(true);
-				CanvasItemSlot->SetPosition(FVector2D(Tile.X * TileSize, Tile.Y * TileSize));
+				if (UCanvasPanelSlot* CanvasItemSlot = Cast<UCanvasPanelSlot>(ItemSlot))
+				{
+					CanvasItemSlot->SetAutoSize(true);
+					CanvasItemSlot->SetPosition(FVector2D(Tile.X * TileSize, Tile.Y * TileSize));
+				}
 			}
 		}
 	}

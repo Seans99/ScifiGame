@@ -53,6 +53,8 @@ public:
 	void AddItemToInventoryArray(FItemData& Item);
 	void RemoveItem(FItemData& Item);
 
+	UInventoryUI* GetInventoryWidget();
+
 public:
 	FOnInventoryChangedSignature OnInventoryChanged;
 
