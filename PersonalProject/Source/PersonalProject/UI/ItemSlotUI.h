@@ -13,7 +13,7 @@
 class UInventoryUI;
 class UInventoryComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRemoveSignature);
+DECLARE_DELEGATE_OneParam(FRemoveSignature, FItemData&);
 
 UCLASS()
 class PERSONALPROJECT_API UItemSlotUI : public UGUIBase

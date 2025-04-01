@@ -105,7 +105,7 @@ void UInventoryGrid::Refresh()
 			ItemSlotWidget->TileSize = TileSize;
 			ItemSlotWidget->ItemData = Items[i];
 			ItemSlotWidget->InventoryComponent = InventoryComp;
-			ItemSlotWidget->OnRemove.AddDynamic(this, &UInventoryGrid::Remove);
+			ItemSlotWidget->OnRemove.BindUObject(this, &UInventoryGrid::Remove); // Call using OnRemove.ExecuteIfBound(Item)
 			GridCanvasPanel->AddChild(ItemSlotWidget);
 			FTile Tile = InventoryComp->IndexToTile(i);
 			UPanelSlot* ItemSlot = ItemSlotWidget->Slot;
@@ -121,7 +121,7 @@ void UInventoryGrid::Refresh()
 	}
 }
 
-void UInventoryGrid::Remove()
+void UInventoryGrid::Remove(FItemData& Item)
 {
-	//InventoryComp->RemoveItem();
+	InventoryComp->RemoveItem(Item);
 }

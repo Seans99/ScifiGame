@@ -49,7 +49,7 @@ public:
 
 public:
 	UFUNCTION()
-	void Remove();
+	void Remove(FItemData& Item);
 
 	UFUNCTION()
 	void Refresh();

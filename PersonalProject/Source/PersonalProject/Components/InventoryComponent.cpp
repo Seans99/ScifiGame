@@ -64,7 +64,7 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 	}
 
 	
-	for (int i = 0; i < Items.Num(); i++)
+	for (int i = 0; i < Items.Num(); ++i)
 	{
 		CurrentIndex = i;
 		bool bCanAdd = false;
@@ -167,9 +167,9 @@ TArray<FTile> UInventoryComponent::ForEachIndex(FItemData& Item)
 	int LastIndexX = Tile.X + (Dimensions.X - 1);
 	int LastIndexY = Tile.Y + (Dimensions.Y - 1);
 
-	for (int i = Tile.X; i < LastIndexX; i++)
+	for (int i = Tile.X; i < LastIndexX; ++i)
 	{
-		for (int j = Tile.Y; j < LastIndexY; j++)
+		for (int j = Tile.Y; j < LastIndexY; ++j)
 		{
 			Tiles.Add(FTile(i, j));
 		}
