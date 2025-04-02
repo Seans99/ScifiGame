@@ -39,7 +39,7 @@ bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
-
+	
 	UItemSlotUI* DroppedItem = Cast<UItemSlotUI>(InOperation->Payload);
 	// Spawn item in front of player
 	

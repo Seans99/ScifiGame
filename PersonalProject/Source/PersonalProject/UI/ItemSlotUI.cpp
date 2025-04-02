@@ -39,16 +39,17 @@ void UItemSlotUI::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	DragDrop->DefaultDragVisual = this;
 	DragDrop->Pivot = EDragPivot::MouseDown;
 	OutOperation = DragDrop;
+
+	FText Name = FText::FromString("");
+	FText Desc = FText::FromString("");
+	InventoryUI->SetItemDetails(Name, Desc);
 	
 	OnRemove.ExecuteIfBound(*ItemData);
 	RemoveFromParent();
-
-	UE_LOG(LogTemp, Warning, TEXT("OnDragDetected"));
 }
 
 FReply UItemSlotUI::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& InMouseEvent)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnMouseDown"));
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 

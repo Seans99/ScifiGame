@@ -33,6 +33,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	bool bInInventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UObject* ItemObjectReference;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FText ItemName;
