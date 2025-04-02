@@ -24,6 +24,10 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeOnDragDetected(const FGeometry & InGeometry, const FPointerEvent & InMouseEvent, UDragDropOperation *& OutOperation) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent & InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
 public:
 	void RefreshSlot();
@@ -31,6 +35,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	USizeBox* ItemSlotBox;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UImage* BackgroundImage;
 	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UImage* InventorySlotImage;
@@ -41,16 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UTextBlock* ItemAmount;
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	UButton* ItemButton;
-
 public:
-	UFUNCTION()
-	void ItemHovered();
-
-	UFUNCTION()
-	void ItemUnhovered();
-
 	UFUNCTION()
 	void InitializeSlot();
 

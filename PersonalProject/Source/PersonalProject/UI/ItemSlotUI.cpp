@@ -1,5 +1,6 @@
 #include "ItemSlotUI.h"
 #include "InventoryUI.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/Components/InventoryComponent.h"
@@ -19,9 +20,6 @@ void UItemSlotUI::NativeConstruct()
 	if (InventoryComponent != nullptr)
 	{
 		InventoryUI = InventoryComponent->GetInventoryWidget();
-
-		ItemButton->OnHovered.AddDynamic(this, &UItemSlotUI::ItemHovered);
-		ItemButton->OnUnhovered.AddDynamic(this, &UItemSlotUI::ItemUnhovered);
 	}
 }
 
@@ -29,6 +27,47 @@ void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+}
+
+void UItemSlotUI::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+	UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	UDragDropOperation* DragDrop = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
+	DragDrop->Payload = this;
+	DragDrop->DefaultDragVisual = this;
+	DragDrop->Pivot = EDragPivot::MouseDown;
+	OutOperation = DragDrop;
+	
+	OnRemove.ExecuteIfBound(*ItemData);
+	RemoveFromParent();
+
+	UE_LOG(LogTemp, Warning, TEXT("OnDragDetected"));
+}
+
+FReply UItemSlotUI::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& InMouseEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnMouseDown"));
+	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+}
+
+void UItemSlotUI::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	InventoryUI->SetItemDetails(ItemData->ItemName, ItemData->ItemDesc);
+	BackgroundImage->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UItemSlotUI::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	FText Name = FText::FromString("");
+	FText Desc = FText::FromString("");
+	InventoryUI->SetItemDetails(Name, Desc);
+	BackgroundImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UItemSlotUI::RefreshSlot()
@@ -55,18 +94,6 @@ void UItemSlotUI::RefreshSlot()
 	{
 		ItemAmountBorder->SetVisibility(ESlateVisibility::Hidden);
 	}
-}
-
-void UItemSlotUI::ItemHovered()
-{
-	InventoryUI->SetItemDetails(ItemData->ItemName, ItemData->ItemDesc);
-}
-
-void UItemSlotUI::ItemUnhovered()
-{
-	FText Name = FText::FromString("");
-	FText Desc = FText::FromString("");
-	InventoryUI->SetItemDetails(Name, Desc);
 }
 
 void UItemSlotUI::InitializeSlot()

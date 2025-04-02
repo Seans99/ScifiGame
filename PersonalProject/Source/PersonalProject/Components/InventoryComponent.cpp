@@ -231,7 +231,30 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 
 void UInventoryComponent::RemoveItem(FItemData& Item)
 {
-	
+	if (Item.bInInventory)
+	{
+		for (int i = 0; i < Items.Num(); ++i)
+		{
+			TArray<FTile> Tiles = ForEachIndex(Item, i);
+			for (int j = 0; j < Tiles.Num(); ++j)
+			{
+				int TileIndex = TileToIndex(Tiles[j]);
+				if (j == 0)
+				{
+					if (Items.IsValidIndex(TileIndex))
+					{
+						Item.bInInventory = false;
+						Items[TileIndex] = FItemData();
+					}
+				}
+				else
+				{
+					Items[TileIndex].bInInventory = false;
+				}
+			}
+		}
+		bIsDirty = true;
+	}
 }
 
 UInventoryUI* UInventoryComponent::GetInventoryWidget()

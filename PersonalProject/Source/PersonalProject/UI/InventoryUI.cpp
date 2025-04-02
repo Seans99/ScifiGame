@@ -1,6 +1,7 @@
 #include "InventoryUI.h"
 
 #include "ItemSlotUI.h"
+#include "Blueprint/DragDropOperation.h"
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "Kismet/GameplayStatics.h"
@@ -32,6 +33,17 @@ void UInventoryUI::NativeConstruct()
 void UInventoryUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+}
+
+bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	UDragDropOperation* InOperation)
+{
+	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	UItemSlotUI* DroppedItem = Cast<UItemSlotUI>(InOperation->Payload);
+	// Spawn item in front of player
+	
+	return true;
 }
 
 void UInventoryUI::CloseInventory()
