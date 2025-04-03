@@ -21,6 +21,8 @@ public:
 	FItemData()
 		:
 		  bInInventory(false),
+		  ItemID(),
+		  ItemObjectReference(),
 	      bItemStackable(false),
 		  ItemAmount(0),
 		  ItemMesh(nullptr),
@@ -33,6 +35,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	bool bInInventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	int ItemID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UObject* ItemObjectReference;

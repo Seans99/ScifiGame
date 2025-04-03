@@ -31,6 +31,11 @@ void AItemBase::BeginPlay()
 	{
 		Player->OnInteract.AddDynamic(this, &AItemBase::PickupItem);
 	}
+
+	if (ItemData.ItemMesh)
+	{
+		ItemMesh->SetStaticMesh(ItemData.ItemMesh);
+	}
 }
 
 void AItemBase::Tick(float DeltaTime)
@@ -53,6 +58,11 @@ void AItemBase::PickupItem()
 			Destroy();
 		}
 	}
+}
+
+UClass* AItemBase::GetItemClass() const
+{
+	return StaticClass();
 }
 
 void AItemBase::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

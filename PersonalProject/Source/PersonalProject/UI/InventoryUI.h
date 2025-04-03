@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GUIBase.h"
+#include "PersonalProject/Structs/ItemStruct.h"
 #include "InventoryUI.generated.h"
 
 class UInventoryComponent;
@@ -22,7 +23,7 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	bool NativeOnDrop(const FGeometry & InGeometry, const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation);
+	virtual bool NativeOnDrop(const FGeometry & InGeometry, const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation) override;
 	
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -49,6 +50,7 @@ public:
 
 public:
 	void SetItemDetails(FText Name, FText Desc);
+	void DropItemAtPlayer(UObject* ItemToDrop);
 
 private:
 	UFUNCTION()

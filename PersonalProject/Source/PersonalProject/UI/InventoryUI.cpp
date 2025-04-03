@@ -6,6 +6,7 @@
 #include "Components/WrapBox.h"
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/Components/InventoryComponent.h"
+#include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
 #include "UIComponents/InventoryGrid.h"
 
@@ -38,12 +39,15 @@ void UInventoryUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
-	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	if (!InOperation->Payload)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Payload"));
+	}
 	
 	UItemSlotUI* DroppedItem = Cast<UItemSlotUI>(InOperation->Payload);
-	// Spawn item in front of player
+	DropItemAtPlayer(InOperation->Payload);
 	
-	return true;
+	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
 
 void UInventoryUI::CloseInventory()
@@ -60,6 +64,30 @@ void UInventoryUI::SetItemDetails(FText Name, FText Desc)
 	// Force immediate update
 	ItemName->SynchronizeProperties();
 	ItemDesc->SynchronizeProperties();
+}
+
+void UInventoryUI::DropItemAtPlayer(UObject* ItemToDrop)
+{
+	if (ItemToDrop == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ItemToDrop is NULL"));
+	}
+	
+	APrimaryPlayerCharacter* Player = Cast<APrimaryPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	FVector Location = Player->GetActorLocation() + (Player->GetActorForwardVector() * 150.f);
+	FRotator Rotation = Player->GetActorRotation();
+
+	FHitResult Hit;
+	FVector EndLocation = Location - FVector(0,0,1000);
+	if (GetWorld()->LineTraceSingleByChannel(Hit, Location, EndLocation, ECollisionChannel::ECC_Visibility))
+	{
+		Location = Hit.Location;
+	}
+
+	UBlueprint* ItemBlueprint = Cast<UBlueprint>(ItemToDrop);
+	UClass* ItemClass = ItemBlueprint->GeneratedClass;
+	
+	AActor* SpawnItem = GetWorld()->SpawnActor<AActor>(ItemClass, Location, Rotation);
 }
 
 
