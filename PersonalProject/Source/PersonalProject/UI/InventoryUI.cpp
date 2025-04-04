@@ -5,7 +5,6 @@
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "Kismet/GameplayStatics.h"
-#include "PersonalProject/Components/InventoryComponent.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
 #include "UIComponents/InventoryGrid.h"
@@ -44,7 +43,6 @@ bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 		UE_LOG(LogTemp, Error, TEXT("No Payload"));
 	}
 	
-	UItemSlotUI* DroppedItem = Cast<UItemSlotUI>(InOperation->Payload);
 	DropItemAtPlayer(InOperation->Payload);
 	
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);

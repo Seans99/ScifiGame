@@ -42,8 +42,8 @@ void UItemSlotUI::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 
 	FText Name = FText::FromString("");
 	FText Desc = FText::FromString("");
-	InventoryUI->SetItemDetails(Name, Desc);
-	
+	InventoryUI->SetItemDetails(Name, Desc);	
+
 	OnRemove.ExecuteIfBound(*ItemData);
 	RemoveFromParent();
 }

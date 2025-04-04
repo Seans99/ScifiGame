@@ -106,7 +106,7 @@ void UInventoryGrid::Refresh()
 			ItemSlotWidget->TileSize = TileSize;
 			ItemSlotWidget->ItemData = It.Key();
 			ItemSlotWidget->InventoryComponent = InventoryComp;
-			ItemSlotWidget->OnRemove.BindUObject(this, &UInventoryGrid::Remove); // Call using OnRemove.ExecuteIfBound(Item)
+			ItemSlotWidget->OnRemove.BindUObject(this, &UInventoryGrid::Remove);
 			GridCanvasPanel->AddChild(ItemSlotWidget);
 			UPanelSlot* ItemSlot = ItemSlotWidget->Slot;
 			if (ItemSlot)

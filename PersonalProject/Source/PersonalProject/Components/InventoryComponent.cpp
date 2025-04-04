@@ -256,9 +256,9 @@ void UInventoryComponent::RemoveItem(FItemData& Item)
 						Items[TileIndex].bInInventory = false;
 					}
 				}
+				bIsDirty = true;
 			}
 		}
-		bIsDirty = true;
 	}
 }
 
