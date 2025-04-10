@@ -51,6 +51,8 @@ int32 UInventoryGrid::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
+	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 	
 	if (CheckIfRoomAvailable(GetPayLoad(Operation)))
@@ -70,12 +72,14 @@ bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		}
 	}
 	
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	return true;
 }
 
 bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
+	Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
+	
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 
 	FVector2D MousePos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());
@@ -98,7 +102,7 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 
 	DraggedItemTile = MousePoint - ItemPoint;
 	
-	return Super::NativeOnDragOver(InGeometry, InDragDropEvent, Operation);
+	return true;
 }
 
 FItemData* UInventoryGrid::GetPayLoad(UCustomDragAndDropOperation* DragDropOperation)

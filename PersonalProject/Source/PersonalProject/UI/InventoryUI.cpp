@@ -39,6 +39,8 @@ void UInventoryUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
+	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	
 	if (!InOperation->Payload)
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Payload"));
@@ -48,7 +50,7 @@ bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	
 	DropItemAtPlayer(InOperation->Payload, &Operation->ItemData);
 	
-	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	return true;
 }
 
 void UInventoryUI::CloseInventory()
