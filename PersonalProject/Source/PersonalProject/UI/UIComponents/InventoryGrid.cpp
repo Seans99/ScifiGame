@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/Components/InventoryComponent.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
+#include "PersonalProject/PrimarySystems/GameInstances/DropAtPlayer.h"
 #include "PersonalProject/UI/ItemSlotUI.h"
 
 void UInventoryGrid::NativeConstruct()
@@ -62,7 +63,10 @@ bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	{
 		if (!InventoryComp->AddToInventory(*GetPayLoad(Operation)))
 		{
-			// Drop Item
+			if (UDropAtPlayer* DropAtPlayer = GetGameInstance()->GetSubsystem<UDropAtPlayer>())
+			{
+				DropAtPlayer->Drop(InOperation->Payload, GetPayLoad(Operation));
+			}
 		}
 	}
 	

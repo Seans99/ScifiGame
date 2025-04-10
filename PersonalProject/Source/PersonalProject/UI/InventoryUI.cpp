@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerController.h"
+#include "PersonalProject/PrimarySystems/GameInstances/DropAtPlayer.h"
 #include "UIComponents/InventoryGrid.h"
 
 void UInventoryUI::NativeOnInitialized()
@@ -73,30 +74,9 @@ void UInventoryUI::DropItemAtPlayer(UObject* ItemToDrop, FItemData* ItemData)
 		UE_LOG(LogTemp, Error, TEXT("ItemToDrop is NULL"));
 	}
 	
-	APrimaryPlayerCharacter* Player = Cast<APrimaryPlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	FVector Location = Player->GetActorLocation() + (Player->GetActorForwardVector() * 150.f);
-	FRotator Rotation = Player->GetActorRotation();
-
-	FHitResult Hit;
-	FVector EndLocation = Location - FVector(0,0,1000);
-	if (GetWorld()->LineTraceSingleByChannel(Hit, Location, EndLocation, ECollisionChannel::ECC_Visibility))
+	if (UDropAtPlayer* DropAtPlayer = GetGameInstance()->GetSubsystem<UDropAtPlayer>())
 	{
-		Location = Hit.Location;
-	}
-
-	UBlueprint* ItemBlueprint = Cast<UBlueprint>(ItemToDrop);
-	UClass* ItemClass = ItemBlueprint->GeneratedClass;
-
-	if (ItemData->bItemStackable)
-	{
-		for (int i = 0; i < ItemData->ItemAmount; ++i)
-		{
-			GetWorld()->SpawnActor<AActor>(ItemClass, Location, Rotation);
-		}
-	}
-	else
-	{
-		GetWorld()->SpawnActor<AActor>(ItemClass, Location, Rotation);
+		DropAtPlayer->Drop(ItemToDrop, ItemData);
 	}
 }
 
