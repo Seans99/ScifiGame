@@ -49,7 +49,7 @@ public:
 	TArray<FTile> ForEachIndex(FItemData& Item, int Index);
 	FTile IndexToTile(int Index) const;
 	int TileToIndex(FTile Tile) const;
-	bool GetItemAtIndex(int Index, FItemData& Item);
+	FItemData GetItemAtIndex(int Index);
 	void AddItemToInventoryArray(FItemData& Item, int Index);
 	void RemoveItem(FItemData& Item);
 

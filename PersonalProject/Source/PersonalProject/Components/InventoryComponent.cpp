@@ -136,18 +136,9 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 	{
 		if (Tiles[i].X >= 0 && Tiles[i].Y >= 0 && Tiles[i].X < Columns && Tiles[i].Y < Rows)
 		{
-			int TileIndex = TileToIndex(Tiles[i]);
-			if (Items[TileIndex].bInInventory) return false;
-			
-			FItemData ItemData;
-			if (bool bHasFoundItem = GetItemAtIndex(TileIndex, ItemData))
-			{
-				if (ItemData.bInInventory)
-				{
-					return false;
-				}
-			}
-			else
+			int TileIndex = TileToIndex(Tiles[i]);			
+			FItemData ItemData = GetItemAtIndex(TileIndex);
+			if (ItemData.bInInventory)
 			{
 				return false;
 			}
@@ -201,16 +192,17 @@ int UInventoryComponent::TileToIndex(FTile Tile) const
 }
 
 // Get the item at given index
-bool UInventoryComponent::GetItemAtIndex(int Index, FItemData& Item)
+FItemData UInventoryComponent::GetItemAtIndex(int Index)
 {
+	FItemData ItemData;
 	if (Items.IsValidIndex(Index))
 	{
-		Item = Items[Index];
-		return true;
+		ItemData = Items[Index];
+		return ItemData;
 	}
 
-	Item = FItemData();
-	return false;
+	ItemData = FItemData();
+	return ItemData;
 }
 
 // Add item to the inventory and its array
@@ -251,18 +243,9 @@ void UInventoryComponent::RemoveItem(FItemData& Item)
 				for (int j = 0; j < Tiles.Num(); ++j)
 				{
 					int TileIndex = TileToIndex(Tiles[j]);
-					if (j == 0)
+					if (Items.IsValidIndex(TileIndex))
 					{
-						if (Items.IsValidIndex(TileIndex))
-						{
-							Items[TileIndex].ItemID = 0;
-							Items[TileIndex].bInInventory = false;
-							Items[TileIndex] = FItemData();
-						}
-					}
-					else
-					{
-						Items[TileIndex].bInInventory = false;
+						Items[TileIndex] = FItemData();
 					}
 				}
 				bIsDirty = true;

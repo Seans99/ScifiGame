@@ -104,7 +104,7 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	FIntPoint ItemPoint = FIntPoint(ItemDimensionX, ItemDimensionY) / 2;
 
 	FVector2D MouseTile = MousePos / TileSize;
-	FIntPoint MousePoint = FIntPoint(MouseTile.X, MouseTile.Y);
+	FIntPoint MousePoint = FIntPoint(FMath::TruncToFloat(MouseTile.X), FMath::TruncToFloat(MouseTile.Y));
 
 	DraggedItemTile = MousePoint - ItemPoint;
 	
@@ -131,13 +131,7 @@ bool UInventoryGrid::CheckIfRoomAvailable(FItemData* Payload)
 		int Index = InventoryComp->TileToIndex(Tile);
 		if (InventoryComp->CheckIfInventorySpace(*Payload, Index))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("There is room available"));
 			return true;
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("There is NO room available"));
-			return false;
 		}
 	}
 	return false;
