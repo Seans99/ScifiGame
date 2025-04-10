@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GUIBase.h"
+#include "Blueprint/DragDropOperation.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -14,6 +15,15 @@ class UInventoryUI;
 class UInventoryComponent;
 
 DECLARE_DELEGATE_OneParam(FRemoveSignature, FItemData&);
+
+UCLASS()
+class UCustomDragAndDropOperation : public UDragDropOperation
+{
+	GENERATED_BODY()
+
+public:
+	FItemData ItemData;
+};
 
 UCLASS()
 class PERSONALPROJECT_API UItemSlotUI : public UGUIBase

@@ -34,8 +34,9 @@ void UItemSlotUI::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 	
-	UDragDropOperation* DragDrop = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
+	UCustomDragAndDropOperation* DragDrop = Cast<UCustomDragAndDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UCustomDragAndDropOperation::StaticClass()));
 	DragDrop->Payload = ItemData->ItemObjectReference;
+	DragDrop->ItemData = *ItemData;
 	DragDrop->DefaultDragVisual = this;
 	DragDrop->Pivot = EDragPivot::MouseDown;
 	OutOperation = DragDrop;

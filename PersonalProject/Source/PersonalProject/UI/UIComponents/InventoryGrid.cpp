@@ -1,10 +1,11 @@
 #include "InventoryGrid.h"
-
-#include "VisualizeTexture.h"
+#include "Blueprint/DragDropOperation.h"
 #include "Components/Border.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Kismet/GameplayStatics.h"
 #include "PersonalProject/Components/InventoryComponent.h"
+#include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 #include "PersonalProject/UI/ItemSlotUI.h"
 
 void UInventoryGrid::NativeConstruct()
@@ -37,15 +38,107 @@ int32 UInventoryGrid::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 		LinePoints,
 		ESlateDrawEffect::None,
 		CustomColor,  // Line Color
-		true,  // Anti-aliasing
+		true,
 		2.0f   // Thickness
 		);
 	}
-
-	// Draw drop location...
 	
 	return Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle,
 	                          bParentEnabled);
+}
+
+bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	UDragDropOperation* InOperation)
+{
+	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
+	FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
+	int Index = InventoryComp->TileToIndex(Tile);
+	
+	if (CheckIfRoomAvailable(GetPayLoad(Operation)))
+	{
+		InventoryComp->AddItemToInventoryArray(*GetPayLoad(Operation), Index);
+	}
+	else
+	{
+		// Check if space somewhere else in inventory
+		// Else
+		// Drop item
+	}
+	
+	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+}
+
+bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
+	UDragDropOperation* InOperation)
+{
+	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
+
+	FVector2D MousePos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());
+
+	bool Right = false;
+	bool Down = false;
+
+	MousePosInTile(MousePos, Right, Down);
+	FVector2D ItemDimensions = GetPayLoad(Operation)->GridDimensions;
+	int ItemDimensionX = ItemDimensions.X;
+	int ItemDimensionY = ItemDimensions.Y;
+
+	Right ? ItemDimensionX = ItemDimensions.X - 1 : ItemDimensionX = ItemDimensions.X;
+	Down ? ItemDimensionY = ItemDimensions.Y - 1 : ItemDimensionY = ItemDimensions.Y;
+
+	FIntPoint ItemPoint = FIntPoint(ItemDimensionX, ItemDimensionY) / 2;
+
+	FVector2D MouseTile = MousePos / TileSize;
+	FIntPoint MousePoint = FIntPoint(MouseTile.X, MouseTile.Y);
+
+	DraggedItemTile = MousePoint - ItemPoint;
+	
+	return Super::NativeOnDragOver(InGeometry, InDragDropEvent, Operation);
+}
+
+FItemData* UInventoryGrid::GetPayLoad(UCustomDragAndDropOperation* DragDropOperation)
+{
+	if (DragDropOperation != nullptr)
+	{
+		return &DragDropOperation->ItemData;
+	}
+
+	return nullptr;
+}
+
+bool UInventoryGrid::CheckIfRoomAvailable(FItemData* Payload)
+{
+	if (Payload != nullptr)
+	{
+		FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
+		int Index = InventoryComp->TileToIndex(Tile);
+		if (InventoryComp->CheckIfInventorySpace(*Payload, Index))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("There is room available"));
+			return true;
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("There is NO room available"));
+	return false;
+}
+
+bool UInventoryGrid::MousePosInTile(FVector2D MousePos, bool& Right, bool& Down)
+{
+	int TSize = TileSize;
+	int X = MousePos.X;
+	int Y = MousePos.Y;
+	
+	if ((X % TSize) > TileSize / 2.0f)
+	{
+		Right = true;
+	}
+
+	if ((Y % TSize) > TileSize / 2.0f)
+	{
+		Down = true;
+	}
+	
+	return true;
 }
 
 void UInventoryGrid::InitializeGrid(UInventoryComponent* InventoryComponent, float NewTileSize)

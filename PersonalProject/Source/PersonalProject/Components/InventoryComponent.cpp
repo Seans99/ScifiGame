@@ -228,6 +228,7 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 			Items[TileIndex].bInInventory = true;
 		}
 	}
+	bIsDirty = true;
 }
 
 void UInventoryComponent::RemoveItem(FItemData& Item)

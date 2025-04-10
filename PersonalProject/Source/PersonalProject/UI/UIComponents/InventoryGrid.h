@@ -2,11 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "../GUIBase.h"
+#include "PersonalProject/Structs/ItemStruct.h"
 #include "PersonalProject/Structs/Line.h"
 #include "InventoryGrid.generated.h"
 
+class UCustomDragAndDropOperation;
+
 class UInventoryComponent;
 class UItemSlotUI;
+class AItemBase;
 
 class UCanvasPanel;
 class UBorder;
@@ -29,7 +33,9 @@ protected:
 		const FWidgetStyle& InWidgetStyle,
 		bool bParentEnabled
 		) const override;
-
+	virtual bool NativeOnDrop(const FGeometry & InGeometry, const FDragDropEvent & InDragDropEvent, UDragDropOperation * InOperation) override;
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UBorder* GridBorder;
@@ -56,6 +62,9 @@ public:
 
 private:
 	void CreateLineSegments();
+	FItemData* GetPayLoad(UCustomDragAndDropOperation* DragDropOperation);
+	bool CheckIfRoomAvailable(FItemData* Payload);
+	bool MousePosInTile(FVector2D MousePos, bool& Right, bool& Down);
 	
 public:
 	UPROPERTY()
@@ -65,4 +74,5 @@ public:
 
 private:
 	TArray<FLine> Lines;
+	FIntPoint DraggedItemTile;
 };
