@@ -57,9 +57,9 @@ void UInventoryComponent::OpenInventory()
 	}
 }
 
-bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
+bool UInventoryComponent::AddToInventory(FItemData InteractedItem)
 {
-	if (InteractedItem == nullptr)
+	if (!InteractedItem.ItemImage)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("InteractedItem is null!"));
 		return false;
@@ -69,9 +69,9 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 	{
 		bool bCanAdd = false;
 
-		if (InteractedItem->ItemData.bItemStackable)
+		if (InteractedItem.bItemStackable)
 		{
-			if (Items[i].ItemName.EqualTo(InteractedItem->ItemData.ItemName))
+			if (Items[i].ItemName.EqualTo(InteractedItem.ItemName))
 			{
 				if (CheckIfStackable(Items[i], InteractedItem))
 				{
@@ -80,18 +80,18 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 			}
 			else
 			{
-				if (CheckIfInventorySpace(InteractedItem->ItemData, i))
+				if (CheckIfInventorySpace(InteractedItem, i))
 				{
-					AddItemToInventoryArray(InteractedItem->ItemData, i);
+					AddItemToInventoryArray(InteractedItem, i);
 					bCanAdd = true;
 				}
 			}
 		}
 		else
 		{
-			if (CheckIfInventorySpace(InteractedItem->ItemData, i))
+			if (CheckIfInventorySpace(InteractedItem, i))
 			{
-				AddItemToInventoryArray(InteractedItem->ItemData, i);
+				AddItemToInventoryArray(InteractedItem, i);
 				bCanAdd = true;
 			}
 		}
@@ -106,11 +106,11 @@ bool UInventoryComponent::AddToInventory(AItemBase* InteractedItem)
 	return false;
 }
 
-bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* InteractedItem)
+bool UInventoryComponent::CheckIfStackable(FItemData& Item, FItemData& InteractedItem)
 {
 	if (Item.ItemAmount < MaxAmountPerItem)
 	{
-		int SumItems = Item.ItemAmount + InteractedItem->ItemData.ItemAmount;
+		int SumItems = Item.ItemAmount + InteractedItem.ItemAmount;
 		if (SumItems <= MaxAmountPerItem)
 		{
 			Item.ItemAmount = SumItems;
@@ -120,7 +120,7 @@ bool UInventoryComponent::CheckIfStackable(FItemData& Item, AItemBase* Interacte
 		{
 			int LeftOver = SumItems - MaxAmountPerItem;
 			Item.ItemAmount = MaxAmountPerItem;
-			InteractedItem->ItemData.ItemAmount = LeftOver;
+			InteractedItem.ItemAmount = LeftOver;
 			return false;
 		}
 	}
@@ -134,10 +134,9 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 	{
 		if (Tiles[i].X >= 0 && Tiles[i].Y >= 0 && Tiles[i].X < Columns && Tiles[i].Y < Rows)
 		{
-			int TileIndex = TileToIndex(Tiles[i]);
+			int TileIndex = TileToIndex(Tiles[i]);			
 			FItemData ItemData;
-			bool bHasFoundItem = GetItemAtIndex(TileIndex, ItemData);
-			if (bHasFoundItem)
+			if (bool bHasFoundItem = GetItemAtIndex(TileIndex, ItemData))
 			{
 				if (ItemData.bInInventory)
 				{

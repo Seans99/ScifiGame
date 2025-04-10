@@ -42,8 +42,10 @@ bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Payload"));
 	}
+
+	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 	
-	DropItemAtPlayer(InOperation->Payload);
+	DropItemAtPlayer(InOperation->Payload, &Operation->ItemData);
 	
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 }
@@ -64,7 +66,7 @@ void UInventoryUI::SetItemDetails(FText Name, FText Desc)
 	ItemDesc->SynchronizeProperties();
 }
 
-void UInventoryUI::DropItemAtPlayer(UObject* ItemToDrop)
+void UInventoryUI::DropItemAtPlayer(UObject* ItemToDrop, FItemData* ItemData)
 {
 	if (ItemToDrop == nullptr)
 	{
@@ -84,8 +86,18 @@ void UInventoryUI::DropItemAtPlayer(UObject* ItemToDrop)
 
 	UBlueprint* ItemBlueprint = Cast<UBlueprint>(ItemToDrop);
 	UClass* ItemClass = ItemBlueprint->GeneratedClass;
-	
-	AActor* SpawnItem = GetWorld()->SpawnActor<AActor>(ItemClass, Location, Rotation);
+
+	if (ItemData->bItemStackable)
+	{
+		for (int i = 0; i < ItemData->ItemAmount; ++i)
+		{
+			GetWorld()->SpawnActor<AActor>(ItemClass, Location, Rotation);
+		}
+	}
+	else
+	{
+		GetWorld()->SpawnActor<AActor>(ItemClass, Location, Rotation);
+	}
 }
 
 

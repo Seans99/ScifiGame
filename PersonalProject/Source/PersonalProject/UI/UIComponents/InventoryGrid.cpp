@@ -51,18 +51,19 @@ bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	UDragDropOperation* InOperation)
 {
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
-	FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
-	int Index = InventoryComp->TileToIndex(Tile);
 	
 	if (CheckIfRoomAvailable(GetPayLoad(Operation)))
 	{
+		FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
+		int Index = InventoryComp->TileToIndex(Tile);
 		InventoryComp->AddItemToInventoryArray(*GetPayLoad(Operation), Index);
 	}
 	else
 	{
-		// Check if space somewhere else in inventory
-		// Else
-		// Drop item
+		if (!InventoryComp->AddToInventory(*GetPayLoad(Operation)))
+		{
+			// Drop Item
+		}
 	}
 	
 	return Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);

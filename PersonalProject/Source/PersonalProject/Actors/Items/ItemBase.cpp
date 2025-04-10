@@ -53,7 +53,7 @@ void AItemBase::PickupItem()
 {
 	if (bPlayerInRange)
 	{
-		if (Player->FindComponentByClass<UInventoryComponent>()->AddToInventory(this))
+		if (Player->FindComponentByClass<UInventoryComponent>()->AddToInventory(ItemData))
 		{
 			Destroy();
 		}

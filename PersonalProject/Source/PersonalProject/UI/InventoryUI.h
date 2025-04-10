@@ -50,7 +50,7 @@ public:
 
 public:
 	void SetItemDetails(FText Name, FText Desc);
-	void DropItemAtPlayer(UObject* ItemToDrop);
+	void DropItemAtPlayer(UObject* ItemToDrop, FItemData* ItemData);
 
 private:
 	UFUNCTION()
