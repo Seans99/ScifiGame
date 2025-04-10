@@ -49,6 +49,9 @@ FItemData AItemBase::GetItemData()
 	return ItemData;
 }
 
+// Checks if player is in range
+// If true tries adding the item to the inventory
+// If Success destroy the actor
 void AItemBase::PickupItem()
 {
 	if (bPlayerInRange)

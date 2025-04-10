@@ -29,6 +29,7 @@ void UItemSlotUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 }
 
+// Will run when dragging this widget
 void UItemSlotUI::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
 	UDragDropOperation*& OutOperation)
 {
@@ -49,11 +50,13 @@ void UItemSlotUI::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	RemoveFromParent();
 }
 
+// Checks if the widget is being dragged
 FReply UItemSlotUI::NativeOnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& InMouseEvent)
 {
 	return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 }
 
+// Set item text when hovering with cursor over this widget
 void UItemSlotUI::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
@@ -62,6 +65,7 @@ void UItemSlotUI::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointer
 	BackgroundImage->SetVisibility(ESlateVisibility::Visible);
 }
 
+// Remove item text when not hovering with cursor over this widget 
 void UItemSlotUI::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
@@ -72,6 +76,7 @@ void UItemSlotUI::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 	BackgroundImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
+// Refresh the widget slot details
 void UItemSlotUI::RefreshSlot()
 {
 	if (ItemData->bInInventory)

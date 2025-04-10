@@ -43,6 +43,7 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
+// Open inventory widget
 void UInventoryComponent::OpenInventory()
 {
 	if (!InventoryWidget->IsInViewport())
@@ -57,6 +58,7 @@ void UInventoryComponent::OpenInventory()
 	}
 }
 
+// Try to add item to inventory
 bool UInventoryComponent::AddToInventory(FItemData InteractedItem)
 {
 	if (!InteractedItem.ItemImage)
@@ -134,7 +136,9 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 	{
 		if (Tiles[i].X >= 0 && Tiles[i].Y >= 0 && Tiles[i].X < Columns && Tiles[i].Y < Rows)
 		{
-			int TileIndex = TileToIndex(Tiles[i]);			
+			int TileIndex = TileToIndex(Tiles[i]);
+			if (Items[TileIndex].bInInventory) return false;
+			
 			FItemData ItemData;
 			if (bool bHasFoundItem = GetItemAtIndex(TileIndex, ItemData))
 			{
@@ -157,6 +161,7 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 	return true;
 }
 
+// Returns all the tiles the item will occupy
 TArray<FTile> UInventoryComponent::ForEachIndex(FItemData& Item, int Index)
 {
 	TArray<FTile> Tiles;
@@ -179,7 +184,7 @@ TArray<FTile> UInventoryComponent::ForEachIndex(FItemData& Item, int Index)
 }
 
 
-//Get X and Y coordinate to Tile
+// Get X and Y coordinate to Tile
 FTile UInventoryComponent::IndexToTile(int Index) const
 {
 	int X = Index % Columns;
@@ -188,12 +193,14 @@ FTile UInventoryComponent::IndexToTile(int Index) const
 	return FTile(X, Y);
 }
 
+// Get index of a Tile
 int UInventoryComponent::TileToIndex(FTile Tile) const
 {
 	int Index = Tile.X + (Tile.Y * Columns);
 	return Index;
 }
 
+// Get the item at given index
 bool UInventoryComponent::GetItemAtIndex(int Index, FItemData& Item)
 {
 	if (Items.IsValidIndex(Index))
@@ -206,6 +213,7 @@ bool UInventoryComponent::GetItemAtIndex(int Index, FItemData& Item)
 	return false;
 }
 
+// Add item to the inventory and its array
 void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 {
 	TArray<FTile> Tiles = ForEachIndex(Item, Index);
@@ -230,6 +238,7 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 	bIsDirty = true;
 }
 
+// Remove item from inventory array
 void UInventoryComponent::RemoveItem(FItemData& Item)
 {
 	if (Item.bInInventory)
@@ -267,6 +276,7 @@ UInventoryUI* UInventoryComponent::GetInventoryWidget()
 	return InventoryWidget;
 }
 
+// Get all the items inside the inventory
 TMap<FItemData*, FTile> UInventoryComponent::GetAllItems()
 {
 	TMap<FItemData*, FTile> AllItems;

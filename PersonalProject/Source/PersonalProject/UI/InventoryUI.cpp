@@ -36,6 +36,7 @@ void UInventoryUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
+// Drops item when dropped outside of inventory grid
 bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
@@ -75,7 +76,8 @@ void UInventoryUI::DropItemAtPlayer(UObject* ItemToDrop, FItemData* ItemData)
 	{
 		UE_LOG(LogTemp, Error, TEXT("ItemToDrop is NULL"));
 	}
-	
+
+	// Drop item on ground in front of player
 	if (UDropAtPlayer* DropAtPlayer = GetGameInstance()->GetSubsystem<UDropAtPlayer>())
 	{
 		DropAtPlayer->Drop(ItemToDrop, ItemData);

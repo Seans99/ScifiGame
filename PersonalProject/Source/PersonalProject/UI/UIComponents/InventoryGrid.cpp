@@ -19,6 +19,7 @@ void UInventoryGrid::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 }
 
+// Draw the grid lines
 int32 UInventoryGrid::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
 	const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
 	const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
@@ -48,6 +49,8 @@ int32 UInventoryGrid::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 	                          bParentEnabled);
 }
 
+// When dropping item inside the grid widget checks if space and then adds the items with respective index to inventory array.
+// if no space it will check if there is space anywhere else, otherwise it will drop the item in front of the player
 bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
@@ -75,6 +78,8 @@ bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	return true;
 }
 
+// Runs when dragging item over the grid widget
+// Sets the DraggedItemTile which holds the tiles that will be occupied by the item
 bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
 {
@@ -82,6 +87,7 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 
+	// Get mouse position on local widget.
 	FVector2D MousePos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());
 
 	bool Right = false;
@@ -105,6 +111,7 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	return true;
 }
 
+// Returns the item data from the drag and drop operation
 FItemData* UInventoryGrid::GetPayLoad(UCustomDragAndDropOperation* DragDropOperation)
 {
 	if (DragDropOperation != nullptr)
@@ -115,6 +122,7 @@ FItemData* UInventoryGrid::GetPayLoad(UCustomDragAndDropOperation* DragDropOpera
 	return nullptr;
 }
 
+// Checks if there is room available for item at the given index
 bool UInventoryGrid::CheckIfRoomAvailable(FItemData* Payload)
 {
 	if (Payload != nullptr)
@@ -126,8 +134,12 @@ bool UInventoryGrid::CheckIfRoomAvailable(FItemData* Payload)
 			UE_LOG(LogTemp, Warning, TEXT("There is room available"));
 			return true;
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("There is NO room available"));
+			return false;
+		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("There is NO room available"));
 	return false;
 }
 
@@ -150,6 +162,7 @@ bool UInventoryGrid::MousePosInTile(FVector2D MousePos, bool& Right, bool& Down)
 	return true;
 }
 
+// Initializes grid by creating the lines, setting the tile size and refreshing the tiles
 void UInventoryGrid::InitializeGrid(UInventoryComponent* InventoryComponent, float NewTileSize)
 {
 	InventoryComp = InventoryComponent;
@@ -170,6 +183,7 @@ void UInventoryGrid::InitializeGrid(UInventoryComponent* InventoryComponent, flo
 	InventoryComp->OnInventoryChanged.AddDynamic(this, &UInventoryGrid::Refresh);
 }
 
+// Adds the coordinates of each line to an array
 void UInventoryGrid::CreateLineSegments()
 {
 	// Create vertical lines
@@ -195,6 +209,7 @@ void UInventoryGrid::CreateLineSegments()
 	}
 }
 
+// Refresh each tile and its data
 void UInventoryGrid::Refresh()
 {
 	GridCanvasPanel->ClearChildren();
