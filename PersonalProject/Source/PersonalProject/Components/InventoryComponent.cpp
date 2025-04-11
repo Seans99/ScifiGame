@@ -211,19 +211,19 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 	for (int i = 0; i < Tiles.Num(); ++i)
 	{
 		int TileIndex = TileToIndex(Tiles[i]);
-		if (i == 0)
+		if (Items.IsValidIndex(TileIndex))
 		{
-			if (Items.IsValidIndex(TileIndex))
+			if (i == 0)
 			{
 				Item.ItemID = Index;
 				Item.bInInventory = true;
 				Items[TileIndex] = Item;
 			}
-		}
-		else
-		{
-			Item.ItemID = Index;
-			Items[TileIndex].bInInventory = true;
+			else
+			{
+				Items[TileIndex].ItemID = Index;
+				Items[TileIndex].bInInventory = true;
+			}
 		}
 	}
 	bIsDirty = true;
