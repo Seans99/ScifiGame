@@ -136,9 +136,8 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 	{
 		if (Tiles[i].X >= 0 && Tiles[i].Y >= 0 && Tiles[i].X < Columns && Tiles[i].Y < Rows)
 		{
-			int TileIndex = TileToIndex(Tiles[i]);			
-			FItemData ItemData = GetItemAtIndex(TileIndex);
-			if (ItemData.bInInventory)
+			int TileIndex = TileToIndex(Tiles[i]);
+			if (GetItemAtIndex(TileIndex).bInInventory)
 			{
 				return false;
 			}
@@ -209,7 +208,6 @@ FItemData UInventoryComponent::GetItemAtIndex(int Index)
 void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 {
 	TArray<FTile> Tiles = ForEachIndex(Item, Index);
-	UE_LOG(LogTemp, Warning, TEXT("Tiles: %d"), Tiles.Num());
 	for (int i = 0; i < Tiles.Num(); ++i)
 	{
 		int TileIndex = TileToIndex(Tiles[i]);
@@ -224,6 +222,7 @@ void UInventoryComponent::AddItemToInventoryArray(FItemData& Item, int Index)
 		}
 		else
 		{
+			Item.ItemID = Index;
 			Items[TileIndex].bInInventory = true;
 		}
 	}

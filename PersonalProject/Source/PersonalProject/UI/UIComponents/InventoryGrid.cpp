@@ -58,19 +58,19 @@ bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 	
-	if (CheckIfRoomAvailable(GetPayLoad(Operation)))
+	if (CheckIfRoomAvailable(Operation->ItemData))
 	{
 		FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
 		int Index = InventoryComp->TileToIndex(Tile);
-		InventoryComp->AddItemToInventoryArray(*GetPayLoad(Operation), Index);
+		InventoryComp->AddItemToInventoryArray(Operation->ItemData, Index);
 	}
 	else
 	{
-		if (!InventoryComp->AddToInventory(*GetPayLoad(Operation)))
+		if (!InventoryComp->AddToInventory(Operation->ItemData))
 		{
 			if (UDropAtPlayer* DropAtPlayer = GetGameInstance()->GetSubsystem<UDropAtPlayer>())
 			{
-				DropAtPlayer->Drop(InOperation->Payload, GetPayLoad(Operation));
+				DropAtPlayer->Drop(InOperation->Payload, &Operation->ItemData);
 			}
 		}
 	}
@@ -94,10 +94,11 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	bool Down = false;
 
 	MousePosInTile(MousePos, Right, Down);
-	FVector2D ItemDimensions = GetPayLoad(Operation)->GridDimensions;
-	int ItemDimensionX = ItemDimensions.X;
-	int ItemDimensionY = ItemDimensions.Y;
-
+	FVector2D ItemDimensions = Operation->ItemData.GridDimensions;
+	
+	int ItemDimensionX;
+	int ItemDimensionY;
+	
 	Right ? ItemDimensionX = ItemDimensions.X - 1 : ItemDimensionX = ItemDimensions.X;
 	Down ? ItemDimensionY = ItemDimensions.Y - 1 : ItemDimensionY = ItemDimensions.Y;
 
@@ -111,44 +112,27 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	return true;
 }
 
-// Returns the item data from the drag and drop operation
-FItemData* UInventoryGrid::GetPayLoad(UCustomDragAndDropOperation* DragDropOperation)
-{
-	if (DragDropOperation != nullptr)
-	{
-		return &DragDropOperation->ItemData;
-	}
-
-	return nullptr;
-}
-
 // Checks if there is room available for item at the given index
-bool UInventoryGrid::CheckIfRoomAvailable(FItemData* Payload)
+bool UInventoryGrid::CheckIfRoomAvailable(FItemData& Payload)
 {
-	if (Payload != nullptr)
+	UE_LOG(LogTemp, Warning, TEXT("Dragged Top Left Item Tile Location: %d,%d"), DraggedItemTile.X, DraggedItemTile.Y);
+	FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
+	int Index = InventoryComp->TileToIndex(Tile);
+	if (InventoryComp->CheckIfInventorySpace(Payload, Index))
 	{
-		FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
-		int Index = InventoryComp->TileToIndex(Tile);
-		if (InventoryComp->CheckIfInventorySpace(*Payload, Index))
-		{
-			return true;
-		}
+		return true;
 	}
 	return false;
 }
 
 bool UInventoryGrid::MousePosInTile(FVector2D MousePos, bool& Right, bool& Down)
 {
-	int TSize = TileSize;
-	int X = MousePos.X;
-	int Y = MousePos.Y;
-	
-	if ((X % TSize) > TileSize / 2.0f)
+	if ((FMath::RoundToInt(MousePos.X) % FMath::RoundToInt(TileSize)) > TileSize / 2.0f)
 	{
 		Right = true;
 	}
 
-	if ((Y % TSize) > TileSize / 2.0f)
+	if ((FMath::RoundToInt(MousePos.Y) % FMath::RoundToInt(TileSize)) > TileSize / 2.0f)
 	{
 		Down = true;
 	}

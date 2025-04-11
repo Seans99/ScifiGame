@@ -62,8 +62,7 @@ public:
 
 private:
 	void CreateLineSegments();
-	FItemData* GetPayLoad(UCustomDragAndDropOperation* DragDropOperation);
-	bool CheckIfRoomAvailable(FItemData* Payload);
+	bool CheckIfRoomAvailable(FItemData& Payload);
 	bool MousePosInTile(FVector2D MousePos, bool& Right, bool& Down);
 	
 public:
