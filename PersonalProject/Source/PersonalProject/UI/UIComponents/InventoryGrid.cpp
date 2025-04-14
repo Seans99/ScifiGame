@@ -87,7 +87,7 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 
-	// Get mouse position on local widget.
+	// Get mouse position on widget.
 	FVector2D MousePos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());
 
 	bool Right = false;
@@ -105,7 +105,7 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	FIntPoint ItemPoint = FIntPoint(ItemDimensionX, ItemDimensionY) / 2;
 
 	FVector2D MouseTile = MousePos / TileSize;
-	FIntPoint MousePoint = FIntPoint(FMath::TruncToFloat(MouseTile.X), FMath::TruncToFloat(MouseTile.Y));
+	FIntPoint MousePoint = FIntPoint(MouseTile.X, MouseTile.Y);
 
 	DraggedItemTile = MousePoint - ItemPoint;
 	

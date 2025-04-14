@@ -42,18 +42,26 @@ public:
 	UFUNCTION()
 	bool AddToInventory(FItemData InteractedItem);
 
-	TMap<FItemData*, FTile> GetAllItems();
-
+public:
 	bool CheckIfStackable(FItemData& Item, FItemData& InteractedItem);
+	
 	bool CheckIfInventorySpace(FItemData& Item, int Index);
+	
 	TArray<FTile> ForEachIndex(FItemData& Item, int Index);
+	
 	FTile IndexToTile(int Index) const;
+	
 	int TileToIndex(FTile Tile) const;
+	
 	FItemData GetItemAtIndex(int Index);
+	
 	void AddItemToInventoryArray(FItemData& Item, int Index);
+	
 	void RemoveItem(FItemData& Item);
 
 	UInventoryUI* GetInventoryWidget();
+
+	TMap<FItemData*, FTile> GetAllItems();
 
 public:
 	FOnInventoryChangedSignature OnInventoryChanged;

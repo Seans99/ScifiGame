@@ -45,8 +45,6 @@ public:
 	UFUNCTION()
 	void PickupItem();
 
-	UClass* GetItemClass() const;
-
 public:
 	UFUNCTION()
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent,

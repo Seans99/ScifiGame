@@ -134,6 +134,7 @@ bool UInventoryComponent::CheckIfInventorySpace(FItemData& Item, int Index)
 	TArray<FTile> Tiles = ForEachIndex(Item, Index);
 	for (int i = 0; i < Tiles.Num(); ++i)
 	{
+		// Checks if the tiles are valid (inside the grid)
 		if (Tiles[i].X >= 0 && Tiles[i].Y >= 0 && Tiles[i].X < Columns && Tiles[i].Y < Rows)
 		{
 			int TileIndex = TileToIndex(Tiles[i]);
@@ -263,7 +264,7 @@ TMap<FItemData*, FTile> UInventoryComponent::GetAllItems()
 {
 	TMap<FItemData*, FTile> AllItems;
 	FItemData* CurrentItem;
-	for (int i = 0; i < Items.Num(); i++)
+	for (int i = 0; i < Items.Num(); ++i)
 	{
 		CurrentItem = &Items[i];
 		if (CurrentItem->bInInventory)

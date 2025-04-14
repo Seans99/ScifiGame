@@ -3,6 +3,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "PersonalProject/Components/InventoryComponent.h"
 #include "PersonalProject/PrimarySystems/PrimaryPlayerCharacter.h"
 
@@ -42,6 +43,16 @@ void AItemBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Rotates the prompt for which key to press for interacting with the item towards the player.
+	if (KeyPrompt->IsVisible())
+	{
+		FVector Start = KeyPrompt->GetComponentLocation();
+		FVector Target = Player->GetActorLocation();
+
+		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(Start, Target);
+		
+		KeyPrompt->SetWorldRotation(LookAtRotation);
+	}
 }
 
 FItemData AItemBase::GetItemData()
@@ -61,11 +72,6 @@ void AItemBase::PickupItem()
 			Destroy();
 		}
 	}
-}
-
-UClass* AItemBase::GetItemClass() const
-{
-	return StaticClass();
 }
 
 void AItemBase::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
