@@ -115,7 +115,6 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 // Checks if there is room available for item at the given index
 bool UInventoryGrid::CheckIfRoomAvailable(FItemData& Payload)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Dragged Top Left Item Tile Location: %d,%d"), DraggedItemTile.X, DraggedItemTile.Y);
 	FTile Tile = FTile(DraggedItemTile.X, DraggedItemTile.Y);
 	int Index = InventoryComp->TileToIndex(Tile);
 	if (InventoryComp->CheckIfInventorySpace(Payload, Index))
