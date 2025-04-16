@@ -55,6 +55,12 @@ bool UInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 	UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	if (!InOperation->Payload)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Payload"));
+		return false;
+	}
 	
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 	
@@ -84,6 +90,12 @@ bool UInventoryGrid::NativeOnDragOver(const FGeometry& InGeometry, const FDragDr
 	UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
+
+	if (!InOperation->Payload)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Payload"));
+		return false;
+	}
 	
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
 

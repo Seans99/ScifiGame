@@ -45,6 +45,7 @@ bool UInventoryUI::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEven
 	if (!InOperation->Payload)
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Payload"));
+		return false;
 	}
 
 	UCustomDragAndDropOperation* Operation = Cast<UCustomDragAndDropOperation>(InOperation);
