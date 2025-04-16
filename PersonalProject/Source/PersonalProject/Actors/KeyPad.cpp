@@ -52,8 +52,6 @@ void AKeyPad::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 {
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
-		KeyPrompt->SetVisibility(true);
-		bInteractable = true;
 		bPlayerInRange = true;
 	}
 }
@@ -62,9 +60,9 @@ void AKeyPad::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 {
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
+		bPlayerInRange = false;
 		KeyPrompt->SetVisibility(false);
 		bInteractable = false;
-		bPlayerInRange = false;
 		if (KeyPadUI->IsVisible())
 		{
 			KeyPadUI->SetVisibility(false);
@@ -74,7 +72,7 @@ void AKeyPad::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 void AKeyPad::HandleKeyPadInteract()
 {
-	if (bPlayerInRange)
+	if (bPlayerInRange && bCanInteract)
 	{
 		if (!bInteractingWithKeyPad)
 		{
@@ -90,7 +88,7 @@ void AKeyPad::HandleKeyPadInteract()
 
 void AKeyPad::HandleStopViewKeyPad()
 {
-	if (bPlayerInRange)
+	if (bPlayerInRange && bCanInteract)
 	{
 		if (bInteractingWithKeyPad)
 		{
@@ -132,6 +130,24 @@ void AKeyPad::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bCanInteract)
+	{
+		if (!bInteractingWithKeyPad)
+		{
+			KeyPrompt->SetVisibility(true);
+			bInteractable = true;
+		}
+	}
+	else
+	{
+		KeyPrompt->SetVisibility(false);
+		bInteractable = false;
+		if (KeyPadUI->IsVisible())
+		{
+			KeyPadUI->SetVisibility(false);
+		}
+	}
+
 	if (bCanChangeViewTarget)
 	{
 		ChangeViewTarget(DeltaTime, this, bCanChangeViewTarget);
@@ -140,5 +156,7 @@ void AKeyPad::Tick(float DeltaTime)
 	{
 		ChangeViewTarget(DeltaTime, Player, bCanChangeViewTargetToPlayer);
 	}
+
+	bCanInteract = false;
 }
 

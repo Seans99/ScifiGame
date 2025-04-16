@@ -11,6 +11,9 @@
 #include "../Actors/Tablet_Log.h"
 #include <Kismet/GameplayStatics.h>
 
+#include "EntitySystem/MovieSceneEntitySystemRunner.h"
+#include "PersonalProject/Actors/Items/ItemBase.h"
+
 // Sets default values
 APrimaryPlayerCharacter::APrimaryPlayerCharacter()
 {
@@ -42,6 +45,35 @@ void APrimaryPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FHitResult Hit;
+	StartTrace = Camera->GetComponentLocation();
+	EndTrace = StartTrace + Camera->GetForwardVector() * 400.0f;
+	GetWorld()->LineTraceSingleByChannel(Hit, StartTrace, EndTrace, ECC_Visibility);
+
+	if (Hit.bBlockingHit && IsValid(Hit.GetActor()))
+	{
+		if (AItemBase* Item = Cast<AItemBase>(Hit.GetActor()))
+		{
+			if (Item->bPlayerInRange)
+			{
+				Item->bCanInteract = true;
+			}
+		}
+		if (ATablet_Log* Log = Cast<ATablet_Log>(Hit.GetActor()))
+		{
+			if (Log->bPlayerInRange)
+			{
+				Log->bCanInteract = true;
+			}
+		}
+		if (AKeyPad* KeyPad = Cast<AKeyPad>(Hit.GetActor()))
+		{
+			if (KeyPad->bPlayerInRange)
+			{
+				KeyPad->bCanInteract = true;
+			}
+		}
+	}
 }
 
 // Called to bind functionality to input

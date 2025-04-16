@@ -45,8 +45,6 @@ void ATablet_Log::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 {
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
-		KeyPrompt->SetVisibility(true);
-		bInteractable = true;
 		bPlayerInRange = true;
 	}
 }
@@ -55,9 +53,8 @@ void ATablet_Log::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 {
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
-		KeyPrompt->SetVisibility(false);
-		bInteractable = false;
 		bPlayerInRange = false;
+		KeyPrompt->SetVisibility(false);
 		if (Log->IsVisible())
 		{
 			Log->SetVisibility(false);
@@ -67,27 +64,49 @@ void ATablet_Log::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 void ATablet_Log::HandleInteract()
 {
-	if (bPlayerInRange)
+	if (bPlayerInRange && bCanInteract)
 	{
-		bInteractable = false;
-		KeyPrompt->SetVisibility(false);
-		Log->SetVisibility(true);
+		if (!bInteracting)
+		{
+			bInteracting = true;
+			KeyPrompt->SetVisibility(false);
+			Log->SetVisibility(true);
+		}
 	}
 }
 
 void ATablet_Log::HandleClose()
 {
-	if (bPlayerInRange)
+	if (bPlayerInRange && bCanInteract)
 	{
-		bInteractable = true;
-		KeyPrompt->SetVisibility(true);
-		Log->SetVisibility(false);
+		if (bInteracting)
+		{
+			bInteracting = false;
+			KeyPrompt->SetVisibility(true);
+			Log->SetVisibility(false);
+		}
 	}
 }
 
 void ATablet_Log::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bCanInteract)
+	{
+		if (!bInteracting)
+		{
+			KeyPrompt->SetVisibility(true);
+		}
+	}
+	else
+	{
+		KeyPrompt->SetVisibility(false);
+		if (Log->IsVisible())
+		{
+			Log->SetVisibility(false);
+		}
+	}
 
 	if (Log->IsVisible())
 	{
@@ -98,5 +117,7 @@ void ATablet_Log::Tick(float DeltaTime)
 		
 		Log->SetWorldRotation(LookAtRotation);
 	}
+
+	bCanInteract = false;
 }
 

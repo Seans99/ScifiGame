@@ -90,6 +90,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float SprintSpeed = 1200;
 
+	bool bCanInteract = false;
+
 public:
 	UPROPERTY()
 	FInteractSignature OnInteract;
@@ -112,4 +114,7 @@ private:
 
 	bool bIsMoving = false;
 	void StoppedMoving();
+
+	FVector StartTrace;
+	FVector EndTrace;
 };

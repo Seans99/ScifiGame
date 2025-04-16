@@ -62,7 +62,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	bool bInteractable = false;
+	bool bCanInteract = false;
+	bool bInteracting = false;
 	bool bPlayerInRange = false;
 
 private:

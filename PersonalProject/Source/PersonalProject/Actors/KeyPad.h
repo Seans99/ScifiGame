@@ -66,6 +66,7 @@ public:
 	FString DoorToOpen;
 
 public:
+	bool bCanInteract = false;
 	bool bInteractable = false;
 	bool bCanChangeViewTarget = false;
 	bool bCanChangeViewTargetToPlayer = false;

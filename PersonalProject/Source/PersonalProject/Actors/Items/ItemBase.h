@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FItemData ItemData;
 
+	bool bCanInteract = false;
+	bool bPlayerInRange = false;
+
 public:
 	FItemData GetItemData();
 
@@ -62,6 +65,4 @@ public:
 
 private:
 	APrimaryPlayerCharacter* Player;
-
-	bool bPlayerInRange = false;
 };

@@ -42,6 +42,15 @@ void AItemBase::BeginPlay()
 void AItemBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	if (bCanInteract)
+	{
+		KeyPrompt->SetVisibility(true);
+	}
+	else
+	{
+		KeyPrompt->SetVisibility(false);
+	}
 
 	// Rotates the prompt for which key to press for interacting with the item towards the player.
 	if (KeyPrompt->IsVisible())
@@ -53,6 +62,8 @@ void AItemBase::Tick(float DeltaTime)
 		
 		KeyPrompt->SetWorldRotation(LookAtRotation);
 	}
+
+	bCanInteract = false;
 }
 
 FItemData AItemBase::GetItemData()
@@ -79,7 +90,6 @@ void AItemBase::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, A
 {
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
-		KeyPrompt->SetVisibility(true);
 		bPlayerInRange = true;
 	}
 }
@@ -89,7 +99,6 @@ void AItemBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	if (Cast<APrimaryPlayerCharacter>(OtherActor))
 	{
-		KeyPrompt->SetVisibility(false);
 		bPlayerInRange = false;
 	}
 }
