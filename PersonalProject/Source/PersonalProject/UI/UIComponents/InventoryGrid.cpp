@@ -35,7 +35,7 @@ int32 UInventoryGrid::NativePaint(const FPaintArgs& Args, const FGeometry& Allot
 		
 		FSlateDrawElement::MakeLines(
 		OutDrawElements,
-		LayerId + 1,
+		LayerId,
 		AllottedGeometry.ToPaintGeometry(),
 		LinePoints,
 		ESlateDrawEffect::None,

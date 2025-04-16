@@ -71,12 +71,12 @@ FItemData AItemBase::GetItemData()
 	return ItemData;
 }
 
-// Checks if player is in range
+// Checks if player is in range and can interact
 // If true tries adding the item to the inventory
 // If Success destroy the actor
 void AItemBase::PickupItem()
 {
-	if (bPlayerInRange)
+	if (bPlayerInRange && bCanInteract)
 	{
 		if (Player->FindComponentByClass<UInventoryComponent>()->AddToInventory(ItemData))
 		{

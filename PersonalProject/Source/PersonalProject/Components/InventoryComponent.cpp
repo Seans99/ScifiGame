@@ -73,12 +73,9 @@ bool UInventoryComponent::AddToInventory(FItemData InteractedItem)
 
 		if (InteractedItem.bItemStackable)
 		{
-			if (Items[i].ItemName.EqualTo(InteractedItem.ItemName))
+			if (CheckIfStackable(InteractedItem))
 			{
-				if (CheckIfStackable(Items[i], InteractedItem))
-				{
-					bCanAdd = true;
-				}
+				bCanAdd = true;
 			}
 			else
 			{
@@ -108,24 +105,31 @@ bool UInventoryComponent::AddToInventory(FItemData InteractedItem)
 	return false;
 }
 
-bool UInventoryComponent::CheckIfStackable(FItemData& Item, FItemData& InteractedItem)
+bool UInventoryComponent::CheckIfStackable(FItemData& InteractedItem)
 {
-	if (Item.ItemAmount < MaxAmountPerItem)
+	for (int i = 0; i < Items.Num(); ++i)
 	{
-		int SumItems = Item.ItemAmount + InteractedItem.ItemAmount;
-		if (SumItems <= MaxAmountPerItem)
+		if (Items[i].ItemName.EqualTo(InteractedItem.ItemName))
 		{
-			Item.ItemAmount = SumItems;
-			return true;
-		}
-		else
-		{
-			int LeftOver = SumItems - MaxAmountPerItem;
-			Item.ItemAmount = MaxAmountPerItem;
-			InteractedItem.ItemAmount = LeftOver;
-			return false;
+			if (Items[i].ItemAmount < MaxAmountPerItem)
+			{
+				int SumItems = Items[i].ItemAmount + InteractedItem.ItemAmount;
+				if (SumItems <= MaxAmountPerItem)
+				{
+					Items[i].ItemAmount = SumItems;
+					return true;
+				}
+				else
+				{
+					int LeftOver = SumItems - MaxAmountPerItem;
+					Items[i].ItemAmount = MaxAmountPerItem;
+					InteractedItem.ItemAmount = LeftOver;
+					return false;
+				}
+			}
 		}
 	}
+	
 	return false;
 }
 

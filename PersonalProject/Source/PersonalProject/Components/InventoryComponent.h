@@ -43,7 +43,7 @@ public:
 	bool AddToInventory(FItemData InteractedItem);
 
 public:
-	bool CheckIfStackable(FItemData& Item, FItemData& InteractedItem);
+	bool CheckIfStackable(FItemData& InteractedItem);
 	
 	bool CheckIfInventorySpace(FItemData& Item, int Index);
 	
