@@ -126,12 +126,12 @@ bool UInventoryGrid::CheckIfRoomAvailable(FItemData& Payload)
 
 bool UInventoryGrid::MousePosInTile(FVector2D MousePos, bool& Right, bool& Down)
 {
-	if ((FMath::RoundToInt(MousePos.X) % FMath::RoundToInt(TileSize)) > TileSize / 2.0f)
+	if ((FMath::TruncToInt(MousePos.X) % FMath::TruncToInt(TileSize)) > TileSize / 2.0f)
 	{
 		Right = true;
 	}
 
-	if ((FMath::RoundToInt(MousePos.Y) % FMath::RoundToInt(TileSize)) > TileSize / 2.0f)
+	if ((FMath::TruncToInt(MousePos.Y) % FMath::TruncToInt(TileSize)) > TileSize / 2.0f)
 	{
 		Down = true;
 	}
